@@ -171,7 +171,28 @@ public class RestaurantDBServer {
 	 *            the restaurant details in JSON format
 	 */
 	public void addRestaurant(String restaurantDetails) {
-		// todo;
+		JSONParser parser = new JSONParser();
+		boolean existingRestaurant = false;
+
+		try {
+			JSONObject newRestaurant = (JSONObject) parser.parse((restaurantDetails));
+
+			Iterator<JSONObject> restaurantItr = this.restaurantArray.iterator();
+			while (restaurantItr.hasNext()) {
+				if (restaurantItr.next().equals(newRestaurant)) {
+					existingRestaurant = true;
+					break;
+				}
+			}
+
+			if (!existingRestaurant) {
+				this.restaurantArray.add(newRestaurant);
+			}
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException();
+		}
 	}
 
 	/**
@@ -183,7 +204,28 @@ public class RestaurantDBServer {
 	 */
 	public void addUser(String userDetails) {
 
-		// TODO: CODE MAN. ONLY ADD IF ITS NOT THERE ALREADY
+		JSONParser parser = new JSONParser();
+		boolean existingUser = false;
+
+		try {
+			JSONObject newUser = (JSONObject) parser.parse((userDetails));
+
+			Iterator<JSONObject> userItr = this.userArray.iterator();
+			while (userItr.hasNext()) {
+				if (userItr.next().equals(newUser)) {
+					existingUser = true;
+					break;
+				}
+			}
+
+			if (!existingUser) {
+				this.userArray.add(newUser);
+			}
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException();
+		}
 	}
 
 	/**
@@ -195,7 +237,28 @@ public class RestaurantDBServer {
 	 */
 	public void addReview(String userReview) {
 
-		// TODO: CODE MAN. ONLY ADD IF ITS NOT THERE ALREADY
+		JSONParser parser = new JSONParser();
+		boolean existingReview = false;
+
+		try {
+			JSONObject newReview = (JSONObject) parser.parse((userReview));
+
+			Iterator<JSONObject> reviewItr = this.reviewArray.iterator();
+			while (reviewItr.hasNext()) {
+				if (reviewItr.next().equals(newReview)) {
+					existingReview = true;
+					break;
+				}
+			}
+
+			if (!existingReview) {
+				this.reviewArray.add(newReview);
+			}
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException();
+		}
 	}
 
 }
