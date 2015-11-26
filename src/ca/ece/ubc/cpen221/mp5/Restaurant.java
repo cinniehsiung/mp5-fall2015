@@ -93,4 +93,12 @@ public class Restaurant {
 		}
 
 	}
+	
+	public String getBusinessID(){
+	    return businessID;
+	}
+	
+	public String getName(){
+	    return name;
+	}
 }
