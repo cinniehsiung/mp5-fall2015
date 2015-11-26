@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,10 +25,9 @@ public class RestaurantDBServer {
 
 	// some clarifying and helpful constants
 	final static String REVIEWTEXT_KEY = "text";
+	final static String HOSTNAME = "GREENBEANS";
 
 	// class fields
-	private ServerSocket serverSocket;
-
 	private JSONArray restaurantArray = new JSONArray();
 	private JSONArray reviewArray = new JSONArray();
 	private JSONArray userArray = new JSONArray();
@@ -46,40 +48,35 @@ public class RestaurantDBServer {
 	@SuppressWarnings({ "unchecked", "resource" })
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
 		try {
-			serverSocket = new ServerSocket(port);
-			JSONParser parser = new JSONParser();
-			
-			BufferedReader restaurantReader = new BufferedReader(new FileReader(restaurantDetails));
-			String currentRestaurantLine;
-			while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
 
-				JSONObject currentJSONRestaurant = (JSONObject) parser.parse(currentRestaurantLine);
-				this.restaurantArray.add(currentJSONRestaurant);
+			ServerSocket serverSocket = new ServerSocket(port);
+			Socket clientSocket = serverSocket.accept();
+
+			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+			String inputLine;
+			String outputLine;
+
+			RestaurantDB database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
+			this.restaurantArray = database.getRestaurants();
+			this.reviewArray = database.getReviews();
+			this.userArray = database.getUsers();
+
+			while ((inputLine = in.readLine()) != null) {
+				outputLine = database.query(inputLine).toString(); //might need to change this part
+				out.println(outputLine);
+
+				if (outputLine.equals("Bye."))
+					break;
 			}
 
-			BufferedReader reviewReader = new BufferedReader(new FileReader(userReviews));
-			String currentReviewLine;
-			while ((currentReviewLine = reviewReader.readLine()) != null) {
+			out.close();
+			in.close();
+			clientSocket.close();
+			serverSocket.close();
 
-				JSONObject currentJSONReview = (JSONObject) parser.parse(currentReviewLine);
-				this.reviewArray.add(currentJSONReview);
-			}
-
-			BufferedReader userReader = new BufferedReader(new FileReader(userDetails));
-			String currentUserLine;
-			while ((currentUserLine = userReader.readLine()) != null) {
-
-				JSONObject currentJSONUser = (JSONObject) parser.parse(currentUserLine);
-				this.userArray.add(currentJSONUser);
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
-		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}

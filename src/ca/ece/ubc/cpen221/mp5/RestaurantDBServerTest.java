@@ -10,7 +10,7 @@ public class RestaurantDBServerTest {
 
 	@Test
 	public void testRandomReview() {
-		RestaurantDBServer testServer = new RestaurantDBServer(2223, "data/restaurants.json", "data/reviews.json",
+		RestaurantDBServer testServer = new RestaurantDBServer(432, "data/restaurants.json", "data/reviews.json",
 				"data/users.json");
 
 		String testReview = testServer.randomReview("La Val's Pizza");
@@ -19,7 +19,7 @@ public class RestaurantDBServerTest {
 
 	@Test
 	public void testGetRestaurant() {
-		RestaurantDBServer testServer = new RestaurantDBServer(22160, "data/restaurants.json", "data/reviews.json",
+		RestaurantDBServer testServer = new RestaurantDBServer(2, "data/restaurants.json", "data/reviews.json",
 				"data/users.json");
 
 		String testRestaurant = testServer.getRestaurant("1CBs84C-a-cuA3vncXVSAw");
@@ -28,7 +28,7 @@ public class RestaurantDBServerTest {
 
 	@Test
 	public void testAddRestaurant() {
-		RestaurantDBServer testServer = new RestaurantDBServer(22360, "data/restaurants.json", "data/reviews.json",
+		RestaurantDBServer testServer = new RestaurantDBServer(43, "data/restaurants.json", "data/reviews.json",
 				"data/users.json");
 
 		String newRestaurant = "{\"neighborhoods\":[\"UBC Campus\"],\"city\":\"Vancouver\",\"latitude\":37.8755322,\"review_count\":218,\"stars\":3.5,\"full_address\":\"1834 Euclid Ave\nUC Campus Area\nBerkeley, CA 94709\",\"type\":\"business\",\"url\":\"UBC Website\",\"schools\":[\"University of British Columbia\"],\"price\":1,\"name\":\"Tim Horton\",\"categories\":[\"Coffee\",\"Pastries\"],\"state\":\"BC\",\"photo_url\":\"photostuffthati'mtoolazytoput\",\"business_id\":\"7787077207\",\"open\":true,\"longitude\":-122.2603641}";
