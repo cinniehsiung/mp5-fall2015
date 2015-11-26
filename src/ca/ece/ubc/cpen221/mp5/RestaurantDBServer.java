@@ -1,20 +1,14 @@
 package ca.ece.ubc.cpen221.mp5;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -49,6 +43,7 @@ public class RestaurantDBServer {
 	 * @param userDetails
 	 *            the name of a file with user details in JSON format
 	 */
+	@SuppressWarnings({ "unchecked", "resource" })
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails)
 			throws IOException {
 
@@ -57,7 +52,7 @@ public class RestaurantDBServer {
 		try {
 			BufferedReader restaurantReader = new BufferedReader(new FileReader(restaurantDetails));
 			String currentRestaurantLine;
-			outer: while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
+			while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
 
 				JSONObject currentJSONRestaurant = (JSONObject) parser.parse(currentRestaurantLine);
 				this.restaurantArray.add(currentJSONRestaurant);
@@ -65,7 +60,7 @@ public class RestaurantDBServer {
 
 			BufferedReader reviewReader = new BufferedReader(new FileReader(userReviews));
 			String currentReviewLine;
-			outer: while ((currentReviewLine = reviewReader.readLine()) != null) {
+			while ((currentReviewLine = reviewReader.readLine()) != null) {
 
 				JSONObject currentJSONReview = (JSONObject) parser.parse(currentReviewLine);
 				this.reviewArray.add(currentJSONReview);
@@ -73,7 +68,7 @@ public class RestaurantDBServer {
 
 			BufferedReader userReader = new BufferedReader(new FileReader(userDetails));
 			String currentUserLine;
-			outer: while ((currentUserLine = userReader.readLine()) != null) {
+			while ((currentUserLine = userReader.readLine()) != null) {
 
 				JSONObject currentJSONUser = (JSONObject) parser.parse(currentUserLine);
 				this.userArray.add(currentJSONUser);
@@ -102,6 +97,7 @@ public class RestaurantDBServer {
 	 * @return the name of the random review in JSON format, if the request is
 	 *         invalid, returns a POISON PILL
 	 */
+	@SuppressWarnings("unchecked")
 	public String randomReview(String restaurantName) {
 		String randomReview = "No Review Found. Sorry :(";
 		List<String> allReviews = new ArrayList<String>();
@@ -145,6 +141,7 @@ public class RestaurantDBServer {
 	 * @return the restaurant details in JSON format, if the request is invalid,
 	 *         returns a POISON PILL
 	 */
+	@SuppressWarnings("unchecked")
 	public String getRestaurant(String businessID) {
 		String restaurantDetails = "Sorry. The restaurant was not found.";
 
@@ -170,6 +167,7 @@ public class RestaurantDBServer {
 	 * @param restaurantDetails
 	 *            the restaurant details in JSON format
 	 */
+	@SuppressWarnings("unchecked")
 	public void addRestaurant(String restaurantDetails) {
 		JSONParser parser = new JSONParser();
 		boolean existingRestaurant = false;
@@ -202,6 +200,7 @@ public class RestaurantDBServer {
 	 * @param userDetails
 	 *            the user details in JSON format
 	 */
+	@SuppressWarnings("unchecked")
 	public void addUser(String userDetails) {
 
 		JSONParser parser = new JSONParser();
@@ -235,6 +234,7 @@ public class RestaurantDBServer {
 	 * @param userReview
 	 *            the review details in JSON format
 	 */
+	@SuppressWarnings("unchecked")
 	public void addReview(String userReview) {
 
 		JSONParser parser = new JSONParser();
