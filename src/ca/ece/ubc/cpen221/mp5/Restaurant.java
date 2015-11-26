@@ -49,7 +49,7 @@ public class Restaurant {
 	private long price;
 	private String photo;
 	private Set<String> schools = new HashSet<String>();
-	
+
 	private JSONObject restaurantObj;
 
 	/**
@@ -93,12 +93,22 @@ public class Restaurant {
 		}
 
 	}
-	
-	public String getBusinessID(){
-	    return businessID;
+
+	/**
+	 * A method to get the business ID of a restaurant.
+	 * 
+	 * @return the business ID
+	 */
+	public String getBusinessID() {
+		return businessID;
 	}
-	
-	public String getName(){
-	    return name;
+
+	/**
+	 * A method to get the name of the restaurant.
+	 * 
+	 * @return the name of the restaurant
+	 */
+	public String getName() {
+		return name;
 	}
 }

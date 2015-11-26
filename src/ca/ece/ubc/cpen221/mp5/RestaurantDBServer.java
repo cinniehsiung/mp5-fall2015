@@ -8,6 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,6 +26,8 @@ public class RestaurantDBServer {
 	private String restaurantDetails;
 	private String userReviews;
 	private String userDetails;
+
+	final static String REVIEWTEXT_KEY = "text";
 
 	/**
 	 * The constructor for RestaurantDBServer.
@@ -56,19 +63,41 @@ public class RestaurantDBServer {
 	 *         invalid, returns a POISON PILL
 	 */
 	public String randomReview(String restaurantName) {
-		String randomReview = "";
-
+		String randomReview = "No Review Found. Sorry :(";
+		List<String> allReviews = new ArrayList<String>();
 		JSONParser parser = new JSONParser();
 
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(this.restaurantDetails));
+			BufferedReader restaurantReader = new BufferedReader(new FileReader(this.restaurantDetails));
+			String businessID = "";
+			String currentRestaurantLine;
+			outer: while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
 
-			String currentLine;
-			while ((currentLine = reader.readLine()) != null) {
-				
-				JSONObject o = (JSONObject) parser.parse(currentLine);
-				Restaurant testRestaurant = new Restaurant((JSONObject) o);
+				JSONObject currentJSONRestaurant = (JSONObject) parser.parse(currentRestaurantLine);
+				Restaurant currentRestaurant = new Restaurant((JSONObject) currentJSONRestaurant);
+				if (currentRestaurant.getName().equals(restaurantName)) {
+					businessID = currentRestaurant.getBusinessID();
+					break;
+				}
 			}
+
+			BufferedReader reviewsReader = new BufferedReader(new FileReader(this.userReviews));
+
+			String currentReviewsLine;
+			String currentReview;
+			while ((currentReviewsLine = reviewsReader.readLine()) != null) {
+
+				JSONObject currentJSONReview = (JSONObject) parser.parse(currentReviewsLine);
+				if (currentJSONReview.get(Restaurant.BUSINESSID_KEY).equals(businessID)) {
+					currentReview = (String) currentJSONReview.get(REVIEWTEXT_KEY);
+					allReviews.add(currentReview);
+				}
+			}
+
+			Random rand = new Random();
+			int randomIndex = rand.nextInt(allReviews.size());
+			randomReview = allReviews.get(randomIndex);
+
 		} catch (FileNotFoundException e) {
 			fail("FILE NOT FOUND SHOULDN'T DO THIS YUI HELP ");
 			e.printStackTrace();
@@ -79,9 +108,8 @@ public class RestaurantDBServer {
 			fail("STUPID PARSER SHOULDN'T DO THIS YUI HELP ");
 			e.printStackTrace();
 		}
-		
-		return randomReview;
 
+		return randomReview;
 	}
 
 	/**
@@ -95,11 +123,35 @@ public class RestaurantDBServer {
 	 *         returns a POISON PILL
 	 */
 	public String getRestaurant(String businessID) {
-		String restaurant = "";
+		String restaurantDetails = "Sorry. The restaurant was not found.";
 
-		// TODO: CODE MAN
+		JSONParser parser = new JSONParser();
+		try {
+			BufferedReader restaurantReader = new BufferedReader(new FileReader(this.restaurantDetails));
 
-		return restaurant;
+			String currentRestaurantLine;
+			outer: while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
+
+				JSONObject currentJSONRestaurant = (JSONObject) parser.parse(currentRestaurantLine);
+				Restaurant currentRestaurant = new Restaurant((JSONObject) currentJSONRestaurant);
+				if (currentRestaurant.getBusinessID().equals(businessID)) {
+					restaurantDetails = currentJSONRestaurant.toJSONString();
+					break outer;
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			fail("FILE NOT FOUND SHOULDN'T DO THIS YUI HELP ");
+			e.printStackTrace();
+		} catch (IOException e) {
+			fail("CAN'T READ THE FILEEEEE SHOULDN'T DO THIS YUI HELP ");
+			e.printStackTrace();
+		} catch (ParseException e) {
+			fail("STUPID PARSER SHOULDN'T DO THIS YUI HELP ");
+			e.printStackTrace();
+		}
+
+		return restaurantDetails;
 	}
 
 	/**
