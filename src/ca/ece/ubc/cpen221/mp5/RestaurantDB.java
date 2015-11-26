@@ -7,6 +7,9 @@ import java.util.Set;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
+	private String restaurantDetails;
+	private String userReviews;
+	private String userDetails;
 
 	/**
 	 * Create a database from the Yelp dataset given the names of three files:
@@ -26,9 +29,19 @@ public class RestaurantDB {
 	 *            the filename for the users
 	 */
 	public RestaurantDB(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
-		// TODO: Implement this method
+		this.restaurantDetails = restaurantJSONfilename;
+		this.userReviews = reviewsJSONfilename;
+		this.userDetails = usersJSONfilename;
 	}
 
+	/**
+	 * Answers the queries using the Yelp dataset database given a string of the
+	 * queries.
+	 * 
+	 * @param queryString
+	 *            the queries in JSON format
+	 * @return a set of restaurants that answer the queries
+	 */
 	public Set<Restaurant> query(String queryString) {
 		// TODO: Implement this method
 		// Write specs, etc.
