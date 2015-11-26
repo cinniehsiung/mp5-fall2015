@@ -91,7 +91,6 @@ public class Restaurant {
 		for (Object currentSchool : allSchools) {
 			this.schools.add((String) currentSchool);
 		}
-
 	}
 
 	/**
