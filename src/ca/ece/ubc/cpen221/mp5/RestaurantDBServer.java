@@ -58,7 +58,27 @@ public class RestaurantDBServer {
 	public String randomReview(String restaurantName) {
 		String randomReview = "";
 
-		//TODO: YUQING IS MEAN AND DOES MECH
+		JSONParser parser = new JSONParser();
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(this.restaurantDetails));
+
+			String currentLine;
+			while ((currentLine = reader.readLine()) != null) {
+				
+				JSONObject o = (JSONObject) parser.parse(currentLine);
+				Restaurant testRestaurant = new Restaurant((JSONObject) o);
+			}
+		} catch (FileNotFoundException e) {
+			fail("FILE NOT FOUND SHOULDN'T DO THIS YUI HELP ");
+			e.printStackTrace();
+		} catch (IOException e) {
+			fail("CAN'T READ THE FILEEEEE SHOULDN'T DO THIS YUI HELP ");
+			e.printStackTrace();
+		} catch (ParseException e) {
+			fail("STUPID PARSER SHOULDN'T DO THIS YUI HELP ");
+			e.printStackTrace();
+		}
 		
 		return randomReview;
 
