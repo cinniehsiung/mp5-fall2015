@@ -11,8 +11,8 @@ public class RestaurantDBServerTest {
 	@Test
 	public void testRandomReview() {
 		try {
-			RestaurantDBServer testServer = new RestaurantDBServer(2990, "data/restaurants.json", "data/reviews.json",
-					"users.json");
+			RestaurantDBServer testServer = new RestaurantDBServer(2223, "data/restaurants.json", "data/reviews.json",
+					"data/users.json");
 
 			String testReview = testServer.randomReview("La Val's Pizza");
 			System.out.println(testReview);
@@ -26,8 +26,8 @@ public class RestaurantDBServerTest {
 	@Test
 	public void testGetRestaurant() {
 		try {
-			RestaurantDBServer testServer = new RestaurantDBServer(2860, "data/restaurants.json", "data/reviews.json",
-					"users.json");
+			RestaurantDBServer testServer = new RestaurantDBServer(22160, "data/restaurants.json", "data/reviews.json",
+					"data/users.json");
 
 			String testRestaurant = testServer.getRestaurant("1CBs84C-a-cuA3vncXVSAw");
 			System.out.println(testRestaurant);
