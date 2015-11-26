@@ -44,12 +44,11 @@ public class RestaurantDBServer {
 	 *            the name of a file with user details in JSON format
 	 */
 	@SuppressWarnings({ "unchecked", "resource" })
-	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails)
-			throws IOException {
-
-		serverSocket = new ServerSocket(port);
-		JSONParser parser = new JSONParser();
+	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
 		try {
+			serverSocket = new ServerSocket(port);
+			JSONParser parser = new JSONParser();
+			
 			BufferedReader restaurantReader = new BufferedReader(new FileReader(restaurantDetails));
 			String currentRestaurantLine;
 			while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
