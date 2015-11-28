@@ -23,14 +23,8 @@ import org.json.simple.parser.ParseException;
 
 public class RestaurantDBServer {
 
-	// some clarifying and helpful constants
-	final static String REVIEWTEXT_KEY = "text";
-	final static String HOSTNAME = "GREENBEANS";
-
 	// class fields
-	private JSONArray restaurantArray = new JSONArray();
-	private JSONArray reviewArray = new JSONArray();
-	private JSONArray userArray = new JSONArray();
+	private final RestaurantDB database;
 
 	/**
 	 * The constructor for RestaurantDBServer.
@@ -45,7 +39,6 @@ public class RestaurantDBServer {
 	 * @param userDetails
 	 *            the name of a file with user details in JSON format
 	 */
-	@SuppressWarnings({ "unchecked", "resource" })
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
 		try {
 
@@ -58,13 +51,12 @@ public class RestaurantDBServer {
 			String inputLine;
 			String outputLine;
 
-			RestaurantDB database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
-			this.restaurantArray = database.getRestaurants();
-			this.reviewArray = database.getReviews();
-			this.userArray = database.getUsers();
+			this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
 
 			while ((inputLine = in.readLine()) != null) {
-				outputLine = database.query(inputLine).toString(); //might need to change this part
+				outputLine = database.query(inputLine).toString(); // might need
+																	// to change
+																	// this part
 				out.println(outputLine);
 
 				if (outputLine.equals("Bye."))
@@ -91,39 +83,10 @@ public class RestaurantDBServer {
 	 * @param restaurantName
 	 *            the restaurant in which to search for a random review
 	 * @return the name of the random review in JSON format, if the request is
-	 *         invalid, returns a POISON PILL
+	 *         invalid, returns "No Review Found. Sorry :(".
 	 */
-	@SuppressWarnings("unchecked")
 	public String randomReview(String restaurantName) {
-		String randomReview = "No Review Found. Sorry :(";
-		List<String> allReviews = new ArrayList<String>();
-
-		Iterator<JSONObject> restaurantItr = this.restaurantArray.iterator();
-		while (restaurantItr.hasNext()) {
-
-			Restaurant currentRestaurant = new Restaurant((restaurantItr.next()));
-			if (currentRestaurant.getName().equals(restaurantName)) {
-
-				String businessID = currentRestaurant.getBusinessID();
-
-				Iterator<JSONObject> reviewItr = this.reviewArray.iterator();
-				while (reviewItr.hasNext()) {
-					JSONObject currentJSONReview = reviewItr.next();
-					if (currentJSONReview.get(Restaurant.BUSINESSID_KEY).equals(businessID)) {
-						String currentReview = (String) currentJSONReview.get(REVIEWTEXT_KEY);
-						allReviews.add(currentReview);
-					}
-				}
-
-				Random rand = new Random();
-				int randomIndex = rand.nextInt(allReviews.size());
-				randomReview = allReviews.get(randomIndex);
-
-				break;
-			}
-
-		}
-
+		String randomReview = database.randomReview(restaurantName);
 		return randomReview;
 	}
 
@@ -135,22 +98,10 @@ public class RestaurantDBServer {
 	 *            the business identifier of which to find the restaurant
 	 *            details
 	 * @return the restaurant details in JSON format, if the request is invalid,
-	 *         returns a POISON PILL
+	 *         returns "Sorry. The restaurant was not found.".
 	 */
-	@SuppressWarnings("unchecked")
 	public String getRestaurant(String businessID) {
-		String restaurantDetails = "Sorry. The restaurant was not found.";
-
-		Iterator<JSONObject> restaurantItr = this.restaurantArray.iterator();
-		while (restaurantItr.hasNext()) {
-			JSONObject currentJSONRestaurant = restaurantItr.next();
-			Restaurant currentRestaurant = new Restaurant(currentJSONRestaurant);
-			if (currentRestaurant.getBusinessID().equals(businessID)) {
-				restaurantDetails = currentJSONRestaurant.toJSONString();
-				break;
-			}
-		}
-
+		String restaurantDetails = database.getRestaurant(businessID);
 		return restaurantDetails;
 
 	}
@@ -163,30 +114,8 @@ public class RestaurantDBServer {
 	 * @param restaurantDetails
 	 *            the restaurant details in JSON format
 	 */
-	@SuppressWarnings("unchecked")
 	public void addRestaurant(String restaurantDetails) {
-		JSONParser parser = new JSONParser();
-		boolean existingRestaurant = false;
-
-		try {
-			JSONObject newRestaurant = (JSONObject) parser.parse((restaurantDetails));
-
-			Iterator<JSONObject> restaurantItr = this.restaurantArray.iterator();
-			while (restaurantItr.hasNext()) {
-				if (restaurantItr.next().equals(newRestaurant)) {
-					existingRestaurant = true;
-					break;
-				}
-			}
-
-			if (!existingRestaurant) {
-				this.restaurantArray.add(newRestaurant);
-			}
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
-		}
+		database.addRestaurant(restaurantDetails);
 	}
 
 	/**
@@ -196,31 +125,8 @@ public class RestaurantDBServer {
 	 * @param userDetails
 	 *            the user details in JSON format
 	 */
-	@SuppressWarnings("unchecked")
 	public void addUser(String userDetails) {
-
-		JSONParser parser = new JSONParser();
-		boolean existingUser = false;
-
-		try {
-			JSONObject newUser = (JSONObject) parser.parse((userDetails));
-
-			Iterator<JSONObject> userItr = this.userArray.iterator();
-			while (userItr.hasNext()) {
-				if (userItr.next().equals(newUser)) {
-					existingUser = true;
-					break;
-				}
-			}
-
-			if (!existingUser) {
-				this.userArray.add(newUser);
-			}
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
-		}
+		database.addUser(userDetails);
 	}
 
 	/**
@@ -230,31 +136,8 @@ public class RestaurantDBServer {
 	 * @param userReview
 	 *            the review details in JSON format
 	 */
-	@SuppressWarnings("unchecked")
 	public void addReview(String userReview) {
-
-		JSONParser parser = new JSONParser();
-		boolean existingReview = false;
-
-		try {
-			JSONObject newReview = (JSONObject) parser.parse((userReview));
-
-			Iterator<JSONObject> reviewItr = this.reviewArray.iterator();
-			while (reviewItr.hasNext()) {
-				if (reviewItr.next().equals(newReview)) {
-					existingReview = true;
-					break;
-				}
-			}
-
-			if (!existingReview) {
-				this.reviewArray.add(newReview);
-			}
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
-		}
+		database.addReview(userReview);
 	}
 
 }

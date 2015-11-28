@@ -31,9 +31,9 @@ public class Review {
 	final private Map<String, Long> votes = new HashMap<String, Long>();
 	final private String reviewID;
 	final private String text;
-	final private long stars;
+	final private long stars; // rep invariant greater than 0
 	final private String userID;
-	final private String date;
+	final private String date; // rep invariant year month day valid
 
 	final private JSONObject reviewJSON;
 
@@ -44,7 +44,7 @@ public class Review {
 	 *            the review details in JSON format
 	 */
 	public Review(JSONObject obj) {
-		this.reviewJSON = obj;
+		this.reviewJSON = (JSONObject) obj.clone();
 
 		this.type = (String) this.reviewJSON.get(TYPE_KEY);
 		this.businessID = (String) this.reviewJSON.get(BUSINESSID_KEY);
@@ -60,7 +60,7 @@ public class Review {
 		this.userID = (String) this.reviewJSON.get(USERID_KEY);
 		this.date = (String) this.reviewJSON.get(DATE_KEY);
 	}
-
+	
 	/**
 	 * A method to return the type of the review;
 	 * 
@@ -85,7 +85,9 @@ public class Review {
 	 * @return the votes of the review.
 	 */
 	public Map<String, Long> getVotes() {
-		return Collections.unmodifiableMap(votes);
+		Map<String, Long> votesClone = new HashMap<String, Long>();
+		votesClone.putAll(votes);
+		return Collections.unmodifiableMap(votesClone);
 	}
 
 	/**

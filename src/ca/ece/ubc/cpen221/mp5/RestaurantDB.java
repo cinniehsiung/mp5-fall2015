@@ -5,6 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -17,9 +22,9 @@ import org.json.simple.parser.ParseException;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
-	private JSONArray restaurantArray = new JSONArray();
-	private JSONArray reviewArray = new JSONArray();
-	private JSONArray userArray = new JSONArray();
+	private List<Restaurant> restaurantDB = Collections.synchronizedList(new ArrayList<Restaurant>());
+	private List<Review> reviewDB = Collections.synchronizedList(new ArrayList<Review>());
+	private List<User> userDB = Collections.synchronizedList(new ArrayList<User>());
 
 	/**
 	 * Create a database from the Yelp dataset given the names of three files:
@@ -47,7 +52,7 @@ public class RestaurantDB {
 			while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
 
 				JSONObject currentJSONRestaurant = (JSONObject) parser.parse(currentRestaurantLine);
-				this.restaurantArray.add(currentJSONRestaurant);
+				this.restaurantDB.add(new Restaurant(currentJSONRestaurant));
 			}
 
 			BufferedReader reviewReader = new BufferedReader(new FileReader(reviewsJSONfilename));
@@ -55,7 +60,7 @@ public class RestaurantDB {
 			while ((currentReviewLine = reviewReader.readLine()) != null) {
 
 				JSONObject currentJSONReview = (JSONObject) parser.parse(currentReviewLine);
-				this.reviewArray.add(currentJSONReview);
+				this.reviewDB.add(new Review(currentJSONReview));
 			}
 
 			BufferedReader userReader = new BufferedReader(new FileReader(usersJSONfilename));
@@ -63,7 +68,7 @@ public class RestaurantDB {
 			while ((currentUserLine = userReader.readLine()) != null) {
 
 				JSONObject currentJSONUser = (JSONObject) parser.parse(currentUserLine);
-				this.userArray.add(currentJSONUser);
+				this.userDB.add(new User(currentJSONUser));
 			}
 
 		} catch (FileNotFoundException e) {
@@ -78,16 +83,171 @@ public class RestaurantDB {
 		}
 	}
 
-	public JSONArray getRestaurants() {
-		return this.restaurantArray;
+	/**
+	 * Returns a <b>random review</b> in JSON format for the restaurant that
+	 * matches the provided name. If more than one restaurant matches the
+	 * provided name, then any restaurant that satisfies the match can be
+	 * returned.
+	 * 
+	 * @param restaurantName
+	 *            the restaurant in which to search for a random review
+	 * @return the name of the random review in JSON format, if the request is
+	 *         invalid, returns "No Review Found. Sorry :(".
+	 */
+	public String randomReview(String restaurantName) {
+		String randomReview = "No Review Found. Sorry :(";
+
+		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+		while (restaurantItr.hasNext()) {
+
+			Restaurant currentRestaurant = restaurantItr.next();
+			if (currentRestaurant.getName().equals(restaurantName)) {
+
+				String businessID = currentRestaurant.getBusinessID();
+				List<String> allReviews = new ArrayList<String>();
+
+				Iterator<Review> reviewItr = this.reviewDB.iterator();
+				while (reviewItr.hasNext()) {
+					Review currentJSONReview = reviewItr.next();
+					if (currentJSONReview.getBusinessID().equals(businessID)) {
+						String currentReview = (String) currentJSONReview.getText();
+						allReviews.add(currentReview);
+					}
+				}
+
+				Random rand = new Random();
+				int randomIndex = rand.nextInt(allReviews.size());
+				randomReview = allReviews.get(randomIndex);
+
+				break;
+			}
+
+		}
+
+		return randomReview;
 	}
 
-	public JSONArray getReviews() {
-		return this.reviewArray;
+	/**
+	 * Returns the <b>restaurant details</b> in JSON format for the restaurant
+	 * that matches the provided <b>business identifier</b>.
+	 * 
+	 * @param businessID
+	 *            the business identifier of which to find the restaurant
+	 *            details
+	 * @return the restaurant details in JSON format, if the request is invalid,
+	 *         returns "Sorry. The restaurant was not found.".
+	 */
+	public String getRestaurant(String businessID) {
+		String restaurantDetails = "Sorry. The restaurant was not found.";
+
+		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+		while (restaurantItr.hasNext()) {
+			Restaurant currentRestaurant = restaurantItr.next();
+			if (currentRestaurant.getBusinessID().equals(businessID)) {
+				restaurantDetails = currentRestaurant.getJSONDetails();
+				break;
+			}
+		}
+
+		return restaurantDetails;
+
 	}
 
-	public JSONArray getUsers() {
-		return this.userArray;
+	/**
+	 * Creates a new restaurant and adds it into the database given the
+	 * <b>restaurant details</b> provided that the restaurant does not already
+	 * exist.
+	 * 
+	 * @param restaurantDetails
+	 *            the restaurant details in JSON format
+	 */
+	public void addRestaurant(String restaurantDetails) {
+		boolean existingRestaurant = false;
+
+		try {
+			JSONParser parser = new JSONParser();
+			Restaurant newRestaurant = new Restaurant((JSONObject) parser.parse((restaurantDetails)));
+
+			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+			while (restaurantItr.hasNext()) {
+				if (restaurantItr.next().equals(newRestaurant)) {
+					existingRestaurant = true;
+					break;
+				}
+			}
+
+			if (!existingRestaurant) {
+				this.restaurantDB.add(newRestaurant);
+			}
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException();
+		}
+	}
+
+	/**
+	 * Creates a new user and adds it into the database given the <b>user
+	 * details</b> provided that the user does not already exist.
+	 * 
+	 * @param userDetails
+	 *            the user details in JSON format
+	 */
+	public void addUser(String userDetails) {
+		boolean existingUser = false;
+
+		try {
+			JSONParser parser = new JSONParser();
+			User newUser = new User((JSONObject) parser.parse((userDetails)));
+
+			Iterator<User> userItr = this.userDB.iterator();
+			while (userItr.hasNext()) {
+				if (userItr.next().equals(newUser)) {
+					existingUser = true;
+					break;
+				}
+			}
+
+			if (!existingUser) {
+				this.userDB.add(newUser);
+			}
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException();
+		}
+	}
+
+	/**
+	 * Creates a new restaurant review and adds it into the database given the
+	 * <b>review details</b> provided that the review does not already exist.
+	 * 
+	 * @param userReview
+	 *            the review details in JSON format
+	 */
+	public void addReview(String userReview) {
+		boolean existingReview = false;
+
+		try {
+			JSONParser parser = new JSONParser();
+			Review newReview = new Review((JSONObject) parser.parse((userReview)));
+
+			Iterator<Review> reviewItr = this.reviewDB.iterator();
+			while (reviewItr.hasNext()) {
+				if (reviewItr.next().equals(newReview)) {
+					existingReview = true;
+					break;
+				}
+			}
+
+			if (!existingReview) {
+				this.reviewDB.add(newReview);
+			}
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException();
+		}
 	}
 
 	/**

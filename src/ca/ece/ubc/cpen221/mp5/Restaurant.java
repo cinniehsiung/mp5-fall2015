@@ -61,7 +61,7 @@ public class Restaurant {
 	 *            the restaurant details in JSON format
 	 */
 	public Restaurant(JSONObject obj) {
-		this.restaurantJSON = obj;
+		this.restaurantJSON = (JSONObject) obj.clone();
 
 		this.location[LONGITUDE] = (Double) this.restaurantJSON.get(LONGITUDE_KEY);
 		this.location[LATITUDE] = (Double) this.restaurantJSON.get(LATITUDE_KEY);
@@ -93,6 +93,15 @@ public class Restaurant {
 		for (Object currentSchool : allSchools) {
 			this.schools.add((String) currentSchool);
 		}
+	}
+
+	/**
+	 * A method to return the restaurant details in JSON format.
+	 * 
+	 * @return the restaurant details in JSON format.
+	 */
+	public String getJSONDetails() {
+		return this.restaurantJSON.toJSONString();
 	}
 
 	/**
@@ -157,7 +166,9 @@ public class Restaurant {
 	 * @return the neighborhood(s) of the restaurant.
 	 */
 	public Set<String> getNeighbourhoods() {
-		return Collections.unmodifiableSet(neighbourhood);
+		Set<String> neighbourhoodClone = new HashSet<String>();
+		neighbourhoodClone.addAll(neighbourhood);
+		return Collections.unmodifiableSet(neighbourhoodClone);
 	}
 
 	/**
@@ -175,7 +186,9 @@ public class Restaurant {
 	 * @return the categories of the restaurant.
 	 */
 	public Set<String> getCategories() {
-		return Collections.unmodifiableSet(categories);
+		Set<String> categoriesClone = new HashSet<String>();
+		categoriesClone.addAll(categories);
+		return Collections.unmodifiableSet(categoriesClone);
 	}
 
 	/**
@@ -220,7 +233,9 @@ public class Restaurant {
 	 * @return the universities near the restaurant.
 	 */
 	public Set<String> getSchools() {
-		return Collections.unmodifiableSet(schools);
+		Set<String> schoolsClone = new HashSet<String>();
+		schoolsClone.addAll(schools);
+		return Collections.unmodifiableSet(schoolsClone);
 	}
 
 }
