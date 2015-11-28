@@ -165,7 +165,7 @@ public class QueryGrammarParser extends Parser {
 				setState(24); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IN) | (1L << CATEGORY) | (1L << RATING) | (1L << PRICE) | (1L << NAME) | (1L << LPAREN))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << AND) | (1L << OR) | (1L << IN) | (1L << CATEGORY) | (1L << RATING) | (1L << PRICE) | (1L << NAME) | (1L << LPAREN))) != 0) );
 			setState(26); match(EOF);
 			}
 		}
@@ -216,35 +216,49 @@ public class QueryGrammarParser extends Parser {
 		enterRule(_localctx, 2, RULE_orExpr);
 		int _la;
 		try {
+			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(28); atom();
-			setState(34); 
-			_errHandler.sync(this);
+			setState(29);
 			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IN) | (1L << CATEGORY) | (1L << RATING) | (1L << PRICE) | (1L << NAME) | (1L << LPAREN))) != 0)) {
+				{
+				setState(28); atom();
+				}
+			}
+
+			setState(36); 
+			_errHandler.sync(this);
+			_alt = 1;
 			do {
-				{
-				{
-				setState(29); match(OR);
-				setState(32);
-				switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+				switch (_alt) {
 				case 1:
 					{
-					setState(30); atom();
-					}
-					break;
-				case 2:
 					{
-					setState(31); query();
+					setState(31); match(OR);
+					setState(34);
+					switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+					case 1:
+						{
+						setState(32); atom();
+						}
+						break;
+					case 2:
+						{
+						setState(33); query();
+						}
+						break;
+					}
+					}
 					}
 					break;
+				default:
+					throw new NoViableAltException(this);
 				}
-				}
-				}
-				setState(36); 
+				setState(38); 
 				_errHandler.sync(this);
-				_la = _input.LA(1);
-			} while ( _la==OR );
+				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
+			} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
 			}
 		}
 		catch (RecognitionException re) {
@@ -294,35 +308,49 @@ public class QueryGrammarParser extends Parser {
 		enterRule(_localctx, 4, RULE_andExpr);
 		int _la;
 		try {
+			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38); atom();
-			setState(44); 
-			_errHandler.sync(this);
+			setState(41);
 			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IN) | (1L << CATEGORY) | (1L << RATING) | (1L << PRICE) | (1L << NAME) | (1L << LPAREN))) != 0)) {
+				{
+				setState(40); atom();
+				}
+			}
+
+			setState(48); 
+			_errHandler.sync(this);
+			_alt = 1;
 			do {
-				{
-				{
-				setState(39); match(AND);
-				setState(42);
-				switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
+				switch (_alt) {
 				case 1:
 					{
-					setState(40); atom();
-					}
-					break;
-				case 2:
 					{
-					setState(41); query();
+					setState(43); match(AND);
+					setState(46);
+					switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
+					case 1:
+						{
+						setState(44); atom();
+						}
+						break;
+					case 2:
+						{
+						setState(45); query();
+						}
+						break;
+					}
+					}
 					}
 					break;
+				default:
+					throw new NoViableAltException(this);
 				}
-				}
-				}
-				setState(46); 
+				setState(50); 
 				_errHandler.sync(this);
-				_la = _input.LA(1);
-			} while ( _la==AND );
+				_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
+			} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
 			}
 		}
 		catch (RecognitionException re) {
@@ -363,44 +391,44 @@ public class QueryGrammarParser extends Parser {
 		AtomContext _localctx = new AtomContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_atom);
 		try {
-			setState(56);
+			setState(60);
 			switch (_input.LA(1)) {
 			case IN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(48); match(IN);
+				setState(52); match(IN);
 				}
 				break;
 			case CATEGORY:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(49); match(CATEGORY);
+				setState(53); match(CATEGORY);
 				}
 				break;
 			case RATING:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(50); match(RATING);
+				setState(54); match(RATING);
 				}
 				break;
 			case PRICE:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(51); match(PRICE);
+				setState(55); match(PRICE);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(52); match(NAME);
+				setState(56); match(NAME);
 				}
 				break;
 			case LPAREN:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(53); match(LPAREN);
-				setState(54); match(OR);
-				setState(55); match(RPAREN);
+				setState(57); match(LPAREN);
+				setState(58); match(OR);
+				setState(59); match(RPAREN);
 				}
 				break;
 			default:
@@ -419,24 +447,25 @@ public class QueryGrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\16=\4\2\t\2\4\3\t"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\16A\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\3\2\5\2\f\n\2\3\2\3\2\5\2\20\n\2\3\2\5\2\23\n\2\3\2"+
-		"\3\2\5\2\27\n\2\6\2\31\n\2\r\2\16\2\32\3\2\3\2\3\3\3\3\3\3\3\3\5\3#\n"+
-		"\3\6\3%\n\3\r\3\16\3&\3\4\3\4\3\4\3\4\5\4-\n\4\6\4/\n\4\r\4\16\4\60\3"+
-		"\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5;\n\5\3\5\2\2\6\2\4\6\b\2\2G\2\30\3"+
-		"\2\2\2\4\36\3\2\2\2\6(\3\2\2\2\b:\3\2\2\2\n\f\7\n\2\2\13\n\3\2\2\2\13"+
-		"\f\3\2\2\2\f\r\3\2\2\2\r\17\5\4\3\2\16\20\7\13\2\2\17\16\3\2\2\2\17\20"+
-		"\3\2\2\2\20\31\3\2\2\2\21\23\7\n\2\2\22\21\3\2\2\2\22\23\3\2\2\2\23\24"+
-		"\3\2\2\2\24\26\5\6\4\2\25\27\7\13\2\2\26\25\3\2\2\2\26\27\3\2\2\2\27\31"+
-		"\3\2\2\2\30\13\3\2\2\2\30\22\3\2\2\2\31\32\3\2\2\2\32\30\3\2\2\2\32\33"+
-		"\3\2\2\2\33\34\3\2\2\2\34\35\7\2\2\3\35\3\3\2\2\2\36$\5\b\5\2\37\"\7\4"+
-		"\2\2 #\5\b\5\2!#\5\2\2\2\" \3\2\2\2\"!\3\2\2\2#%\3\2\2\2$\37\3\2\2\2%"+
-		"&\3\2\2\2&$\3\2\2\2&\'\3\2\2\2\'\5\3\2\2\2(.\5\b\5\2),\7\3\2\2*-\5\b\5"+
-		"\2+-\5\2\2\2,*\3\2\2\2,+\3\2\2\2-/\3\2\2\2.)\3\2\2\2/\60\3\2\2\2\60.\3"+
-		"\2\2\2\60\61\3\2\2\2\61\7\3\2\2\2\62;\7\5\2\2\63;\7\6\2\2\64;\7\7\2\2"+
-		"\65;\7\b\2\2\66;\7\t\2\2\678\7\n\2\289\7\4\2\29;\7\13\2\2:\62\3\2\2\2"+
-		":\63\3\2\2\2:\64\3\2\2\2:\65\3\2\2\2:\66\3\2\2\2:\67\3\2\2\2;\t\3\2\2"+
-		"\2\r\13\17\22\26\30\32\"&,\60:";
+		"\3\2\5\2\27\n\2\6\2\31\n\2\r\2\16\2\32\3\2\3\2\3\3\5\3 \n\3\3\3\3\3\3"+
+		"\3\5\3%\n\3\6\3\'\n\3\r\3\16\3(\3\4\5\4,\n\4\3\4\3\4\3\4\5\4\61\n\4\6"+
+		"\4\63\n\4\r\4\16\4\64\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5?\n\5\3\5\2\2"+
+		"\6\2\4\6\b\2\2M\2\30\3\2\2\2\4\37\3\2\2\2\6+\3\2\2\2\b>\3\2\2\2\n\f\7"+
+		"\n\2\2\13\n\3\2\2\2\13\f\3\2\2\2\f\r\3\2\2\2\r\17\5\4\3\2\16\20\7\13\2"+
+		"\2\17\16\3\2\2\2\17\20\3\2\2\2\20\31\3\2\2\2\21\23\7\n\2\2\22\21\3\2\2"+
+		"\2\22\23\3\2\2\2\23\24\3\2\2\2\24\26\5\6\4\2\25\27\7\13\2\2\26\25\3\2"+
+		"\2\2\26\27\3\2\2\2\27\31\3\2\2\2\30\13\3\2\2\2\30\22\3\2\2\2\31\32\3\2"+
+		"\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33\34\3\2\2\2\34\35\7\2\2\3\35\3\3\2"+
+		"\2\2\36 \5\b\5\2\37\36\3\2\2\2\37 \3\2\2\2 &\3\2\2\2!$\7\4\2\2\"%\5\b"+
+		"\5\2#%\5\2\2\2$\"\3\2\2\2$#\3\2\2\2%\'\3\2\2\2&!\3\2\2\2\'(\3\2\2\2(&"+
+		"\3\2\2\2()\3\2\2\2)\5\3\2\2\2*,\5\b\5\2+*\3\2\2\2+,\3\2\2\2,\62\3\2\2"+
+		"\2-\60\7\3\2\2.\61\5\b\5\2/\61\5\2\2\2\60.\3\2\2\2\60/\3\2\2\2\61\63\3"+
+		"\2\2\2\62-\3\2\2\2\63\64\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\7\3\2"+
+		"\2\2\66?\7\5\2\2\67?\7\6\2\28?\7\7\2\29?\7\b\2\2:?\7\t\2\2;<\7\n\2\2<"+
+		"=\7\4\2\2=?\7\13\2\2>\66\3\2\2\2>\67\3\2\2\2>8\3\2\2\2>9\3\2\2\2>:\3\2"+
+		"\2\2>;\3\2\2\2?\t\3\2\2\2\17\13\17\22\26\30\32\37$(+\60\64>";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

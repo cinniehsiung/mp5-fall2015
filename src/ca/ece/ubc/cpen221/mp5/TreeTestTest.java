@@ -13,5 +13,13 @@ public class TreeTestTest {
             
             TreeTest.parseQuery(query);
     }
+    
+    @Test
+    public void test2() {
+       
+            String query = "in(Telegraph Ave) || category(Italian) && price(1..2) && category(Chinese)";
+            
+            TreeTest.parseQuery(query);
+    }
 
 }

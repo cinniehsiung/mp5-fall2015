@@ -47,6 +47,6 @@ WHITESPACE : [ \t\r\n]+ -> skip ;
  */
 
 query : (LPAREN? orExpr RPAREN? | LPAREN? andExpr RPAREN?)+ EOF; 
-orExpr : atom (OR (atom|query))+;
-andExpr : atom (AND (atom|query))+;
+orExpr : atom? (OR (atom|query))+ ;
+andExpr : atom? (AND (atom|query))+ ;
 atom : IN | CATEGORY | RATING | PRICE | NAME | LPAREN OR RPAREN;
