@@ -26,9 +26,9 @@ public class QueryGrammarParser extends Parser {
 		"'('", "')'", "STRING", "RANGE", "WHITESPACE"
 	};
 	public static final int
-		RULE_orExpr = 0, RULE_andExpr = 1, RULE_atom = 2;
+		RULE_query = 0, RULE_orExpr = 1, RULE_andExpr = 2, RULE_atom = 3;
 	public static final String[] ruleNames = {
-		"orExpr", "andExpr", "atom"
+		"query", "orExpr", "andExpr", "atom"
 	};
 
 	@Override
@@ -68,16 +68,134 @@ public class QueryGrammarParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-	public static class OrExprContext extends ParserRuleContext {
+	public static class QueryContext extends ParserRuleContext {
+		public List<OrExprContext> orExpr() {
+			return getRuleContexts(OrExprContext.class);
+		}
 		public List<AndExprContext> andExpr() {
 			return getRuleContexts(AndExprContext.class);
 		}
+		public TerminalNode RPAREN(int i) {
+			return getToken(QueryGrammarParser.RPAREN, i);
+		}
+		public TerminalNode EOF() { return getToken(QueryGrammarParser.EOF, 0); }
+		public List<TerminalNode> LPAREN() { return getTokens(QueryGrammarParser.LPAREN); }
 		public AndExprContext andExpr(int i) {
 			return getRuleContext(AndExprContext.class,i);
 		}
+		public List<TerminalNode> RPAREN() { return getTokens(QueryGrammarParser.RPAREN); }
+		public TerminalNode LPAREN(int i) {
+			return getToken(QueryGrammarParser.LPAREN, i);
+		}
+		public OrExprContext orExpr(int i) {
+			return getRuleContext(OrExprContext.class,i);
+		}
+		public QueryContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_query; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof QueryGrammarListener ) ((QueryGrammarListener)listener).enterQuery(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof QueryGrammarListener ) ((QueryGrammarListener)listener).exitQuery(this);
+		}
+	}
+
+	public final QueryContext query() throws RecognitionException {
+		QueryContext _localctx = new QueryContext(_ctx, getState());
+		enterRule(_localctx, 0, RULE_query);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(22); 
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			do {
+				{
+				setState(22);
+				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+				case 1:
+					{
+					setState(9);
+					switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
+					case 1:
+						{
+						setState(8); match(LPAREN);
+						}
+						break;
+					}
+					setState(11); orExpr();
+					setState(13);
+					_la = _input.LA(1);
+					if (_la==RPAREN) {
+						{
+						setState(12); match(RPAREN);
+						}
+					}
+
+					}
+					break;
+				case 2:
+					{
+					setState(16);
+					switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
+					case 1:
+						{
+						setState(15); match(LPAREN);
+						}
+						break;
+					}
+					setState(18); andExpr();
+					setState(20);
+					_la = _input.LA(1);
+					if (_la==RPAREN) {
+						{
+						setState(19); match(RPAREN);
+						}
+					}
+
+					}
+					break;
+				}
+				}
+				setState(24); 
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IN) | (1L << CATEGORY) | (1L << RATING) | (1L << PRICE) | (1L << NAME) | (1L << LPAREN))) != 0) );
+			setState(26); match(EOF);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class OrExprContext extends ParserRuleContext {
+		public AtomContext atom(int i) {
+			return getRuleContext(AtomContext.class,i);
+		}
+		public List<QueryContext> query() {
+			return getRuleContexts(QueryContext.class);
+		}
 		public List<TerminalNode> OR() { return getTokens(QueryGrammarParser.OR); }
+		public List<AtomContext> atom() {
+			return getRuleContexts(AtomContext.class);
+		}
 		public TerminalNode OR(int i) {
 			return getToken(QueryGrammarParser.OR, i);
+		}
+		public QueryContext query(int i) {
+			return getRuleContext(QueryContext.class,i);
 		}
 		public OrExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -95,26 +213,38 @@ public class QueryGrammarParser extends Parser {
 
 	public final OrExprContext orExpr() throws RecognitionException {
 		OrExprContext _localctx = new OrExprContext(_ctx, getState());
-		enterRule(_localctx, 0, RULE_orExpr);
+		enterRule(_localctx, 2, RULE_orExpr);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(6); andExpr();
-			setState(11);
+			setState(28); atom();
+			setState(34); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==OR) {
+			do {
 				{
 				{
-				setState(7); match(OR);
-				setState(8); andExpr();
+				setState(29); match(OR);
+				setState(32);
+				switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+				case 1:
+					{
+					setState(30); atom();
+					}
+					break;
+				case 2:
+					{
+					setState(31); query();
+					}
+					break;
 				}
 				}
-				setState(13);
+				}
+				setState(36); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			}
+			} while ( _la==OR );
 			}
 		}
 		catch (RecognitionException re) {
@@ -135,9 +265,15 @@ public class QueryGrammarParser extends Parser {
 		public TerminalNode AND(int i) {
 			return getToken(QueryGrammarParser.AND, i);
 		}
+		public List<QueryContext> query() {
+			return getRuleContexts(QueryContext.class);
+		}
 		public List<TerminalNode> AND() { return getTokens(QueryGrammarParser.AND); }
 		public List<AtomContext> atom() {
 			return getRuleContexts(AtomContext.class);
+		}
+		public QueryContext query(int i) {
+			return getRuleContext(QueryContext.class,i);
 		}
 		public AndExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -155,26 +291,38 @@ public class QueryGrammarParser extends Parser {
 
 	public final AndExprContext andExpr() throws RecognitionException {
 		AndExprContext _localctx = new AndExprContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_andExpr);
+		enterRule(_localctx, 4, RULE_andExpr);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(14); atom();
-			setState(19);
+			setState(38); atom();
+			setState(44); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==AND) {
+			do {
 				{
 				{
-				setState(15); match(AND);
-				setState(16); atom();
+				setState(39); match(AND);
+				setState(42);
+				switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
+				case 1:
+					{
+					setState(40); atom();
+					}
+					break;
+				case 2:
+					{
+					setState(41); query();
+					}
+					break;
 				}
 				}
-				setState(21);
+				}
+				setState(46); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			}
+			} while ( _la==AND );
 			}
 		}
 		catch (RecognitionException re) {
@@ -213,46 +361,46 @@ public class QueryGrammarParser extends Parser {
 
 	public final AtomContext atom() throws RecognitionException {
 		AtomContext _localctx = new AtomContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_atom);
+		enterRule(_localctx, 6, RULE_atom);
 		try {
-			setState(30);
+			setState(56);
 			switch (_input.LA(1)) {
 			case IN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(22); match(IN);
+				setState(48); match(IN);
 				}
 				break;
 			case CATEGORY:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(23); match(CATEGORY);
+				setState(49); match(CATEGORY);
 				}
 				break;
 			case RATING:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(24); match(RATING);
+				setState(50); match(RATING);
 				}
 				break;
 			case PRICE:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(25); match(PRICE);
+				setState(51); match(PRICE);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(26); match(NAME);
+				setState(52); match(NAME);
 				}
 				break;
 			case LPAREN:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(27); match(LPAREN);
-				setState(28); match(OR);
-				setState(29); match(RPAREN);
+				setState(53); match(LPAREN);
+				setState(54); match(OR);
+				setState(55); match(RPAREN);
 				}
 				break;
 			default:
@@ -271,16 +419,24 @@ public class QueryGrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\16#\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\3\2\3\2\3\2\7\2\f\n\2\f\2\16\2\17\13\2\3\3\3\3\3\3\7\3\24\n"+
-		"\3\f\3\16\3\27\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4!\n\4\3\4\2\2\5"+
-		"\2\4\6\2\2&\2\b\3\2\2\2\4\20\3\2\2\2\6 \3\2\2\2\b\r\5\4\3\2\t\n\7\4\2"+
-		"\2\n\f\5\4\3\2\13\t\3\2\2\2\f\17\3\2\2\2\r\13\3\2\2\2\r\16\3\2\2\2\16"+
-		"\3\3\2\2\2\17\r\3\2\2\2\20\25\5\6\4\2\21\22\7\3\2\2\22\24\5\6\4\2\23\21"+
-		"\3\2\2\2\24\27\3\2\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\5\3\2\2\2\27\25"+
-		"\3\2\2\2\30!\7\5\2\2\31!\7\6\2\2\32!\7\7\2\2\33!\7\b\2\2\34!\7\t\2\2\35"+
-		"\36\7\n\2\2\36\37\7\4\2\2\37!\7\13\2\2 \30\3\2\2\2 \31\3\2\2\2 \32\3\2"+
-		"\2\2 \33\3\2\2\2 \34\3\2\2\2 \35\3\2\2\2!\7\3\2\2\2\5\r\25 ";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\16=\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\3\2\5\2\f\n\2\3\2\3\2\5\2\20\n\2\3\2\5\2\23\n\2\3\2"+
+		"\3\2\5\2\27\n\2\6\2\31\n\2\r\2\16\2\32\3\2\3\2\3\3\3\3\3\3\3\3\5\3#\n"+
+		"\3\6\3%\n\3\r\3\16\3&\3\4\3\4\3\4\3\4\5\4-\n\4\6\4/\n\4\r\4\16\4\60\3"+
+		"\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5;\n\5\3\5\2\2\6\2\4\6\b\2\2G\2\30\3"+
+		"\2\2\2\4\36\3\2\2\2\6(\3\2\2\2\b:\3\2\2\2\n\f\7\n\2\2\13\n\3\2\2\2\13"+
+		"\f\3\2\2\2\f\r\3\2\2\2\r\17\5\4\3\2\16\20\7\13\2\2\17\16\3\2\2\2\17\20"+
+		"\3\2\2\2\20\31\3\2\2\2\21\23\7\n\2\2\22\21\3\2\2\2\22\23\3\2\2\2\23\24"+
+		"\3\2\2\2\24\26\5\6\4\2\25\27\7\13\2\2\26\25\3\2\2\2\26\27\3\2\2\2\27\31"+
+		"\3\2\2\2\30\13\3\2\2\2\30\22\3\2\2\2\31\32\3\2\2\2\32\30\3\2\2\2\32\33"+
+		"\3\2\2\2\33\34\3\2\2\2\34\35\7\2\2\3\35\3\3\2\2\2\36$\5\b\5\2\37\"\7\4"+
+		"\2\2 #\5\b\5\2!#\5\2\2\2\" \3\2\2\2\"!\3\2\2\2#%\3\2\2\2$\37\3\2\2\2%"+
+		"&\3\2\2\2&$\3\2\2\2&\'\3\2\2\2\'\5\3\2\2\2(.\5\b\5\2),\7\3\2\2*-\5\b\5"+
+		"\2+-\5\2\2\2,*\3\2\2\2,+\3\2\2\2-/\3\2\2\2.)\3\2\2\2/\60\3\2\2\2\60.\3"+
+		"\2\2\2\60\61\3\2\2\2\61\7\3\2\2\2\62;\7\5\2\2\63;\7\6\2\2\64;\7\7\2\2"+
+		"\65;\7\b\2\2\66;\7\t\2\2\678\7\n\2\289\7\4\2\29;\7\13\2\2:\62\3\2\2\2"+
+		":\63\3\2\2\2:\64\3\2\2\2:\65\3\2\2\2:\66\3\2\2\2:\67\3\2\2\2;\t\3\2\2"+
+		"\2\r\13\17\22\26\30\32\"&,\60:";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

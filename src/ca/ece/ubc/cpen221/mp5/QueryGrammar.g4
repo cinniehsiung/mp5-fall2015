@@ -37,8 +37,7 @@ PRICE : 'price' LPAREN RANGE RPAREN;
 NAME : 'name' LPAREN STRING RPAREN;
 LPAREN : '(' ;
 RPAREN : ')' ;
-STRING : '"'(CHAR)+'"';
-fragment CHAR : [a-z|A-Z];
+STRING : (([a-z]|[A-Z])+ WHITESPACE*)+;
 RANGE : [1-5]'..'[1-5];
 WHITESPACE : [ \t\r\n]+ -> skip ;
 
@@ -47,6 +46,7 @@ WHITESPACE : [ \t\r\n]+ -> skip ;
  *    *** Antlr requires grammar nonterminals to be lowercase, like html, normal, and italic.
  */
 
-orExpr : andExpr (OR andExpr)*;
-andExpr : atom (AND atom)*;
+query : (LPAREN? orExpr RPAREN? | LPAREN? andExpr RPAREN?)+ EOF; 
+orExpr : atom (OR (atom|query))+;
+andExpr : atom (AND (atom|query))+;
 atom : IN | CATEGORY | RATING | PRICE | NAME | LPAREN OR RPAREN;
