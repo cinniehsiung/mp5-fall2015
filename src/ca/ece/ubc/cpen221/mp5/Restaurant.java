@@ -1,6 +1,7 @@
 package ca.ece.ubc.cpen221.mp5;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,24 +34,25 @@ public class Restaurant {
 	final static String SCHOOLS_KEY = "schools";
 
 	// fields for restaurant
-	private double[] location = { 0, 0 };
-	private String city;
-	private String address;
-	private String state;
-	private Set<String> neighbourhood = new HashSet<String>();
+	private double[] location = { 0, 0 }; // rep invariant check legal long/lat
+											// numbers
+	final private String city;
+	final private String address;
+	final private String state;
+	final private Set<String> neighbourhood = new HashSet<String>();
 
-	private String businessID = "";
-	private String name = "";
-	private String type;
-	private Set<String> categories = new HashSet<String>();
+	final private String businessID;
+	final private String name;
+	final private String type;
+	final private Set<String> categories = new HashSet<String>();
 
-	private double stars;
-	private long reviewCount = 0;
-	private long price;
-	private String photo;
-	private Set<String> schools = new HashSet<String>();
+	final private double stars; // rep invariant check if 10 or 5 max
+	private long reviewCount;
+	final private long price; // rep invariant price > 0
+	final private String photo;
+	final private Set<String> schools = new HashSet<String>();
 
-	private JSONObject restaurantObj;
+	final private JSONObject restaurantJSON;
 
 	/**
 	 * This is the constructor for <b>restaurant</b>.
@@ -59,35 +61,35 @@ public class Restaurant {
 	 *            the restaurant details in JSON format
 	 */
 	public Restaurant(JSONObject obj) {
-		this.restaurantObj = obj;
+		this.restaurantJSON = obj;
 
-		this.location[LONGITUDE] = (Double) this.restaurantObj.get(LONGITUDE_KEY);
-		this.location[LATITUDE] = (Double) this.restaurantObj.get(LATITUDE_KEY);
+		this.location[LONGITUDE] = (Double) this.restaurantJSON.get(LONGITUDE_KEY);
+		this.location[LATITUDE] = (Double) this.restaurantJSON.get(LATITUDE_KEY);
 
-		this.city = (String) this.restaurantObj.get(CITY_KEY);
-		this.address = (String) this.restaurantObj.get(ADDRESS_KEY);
-		this.state = (String) this.restaurantObj.get(STATE_KEY);
+		this.city = (String) this.restaurantJSON.get(CITY_KEY);
+		this.address = (String) this.restaurantJSON.get(ADDRESS_KEY);
+		this.state = (String) this.restaurantJSON.get(STATE_KEY);
 
-		JSONArray allNeighborhoods = (JSONArray) this.restaurantObj.get(NEIGHBORHOOD_KEY);
+		JSONArray allNeighborhoods = (JSONArray) this.restaurantJSON.get(NEIGHBORHOOD_KEY);
 		for (Object currentNeighbor : allNeighborhoods) {
 			this.neighbourhood.add((String) currentNeighbor);
 		}
 
-		this.businessID = (String) this.restaurantObj.get(BUSINESSID_KEY);
-		this.name = (String) this.restaurantObj.get(NAME_KEY);
-		this.type = (String) this.restaurantObj.get(TYPE_KEY);
+		this.businessID = (String) this.restaurantJSON.get(BUSINESSID_KEY);
+		this.name = (String) this.restaurantJSON.get(NAME_KEY);
+		this.type = (String) this.restaurantJSON.get(TYPE_KEY);
 
-		JSONArray allCategories = (JSONArray) this.restaurantObj.get(CATEGORIES_KEY);
+		JSONArray allCategories = (JSONArray) this.restaurantJSON.get(CATEGORIES_KEY);
 		for (Object currentCategory : allCategories) {
 			this.categories.add((String) currentCategory);
 		}
 
-		this.stars = (Double) this.restaurantObj.get(STARS_KEY);
-		this.reviewCount = (long) this.restaurantObj.get(REVIEWCOUNT_KEY);
-		this.price = (long) this.restaurantObj.get(PRICE_KEY);
-		this.photo = (String) this.restaurantObj.get(PHOTO_KEY);
+		this.stars = (Double) this.restaurantJSON.get(STARS_KEY);
+		this.reviewCount = (long) this.restaurantJSON.get(REVIEWCOUNT_KEY);
+		this.price = (long) this.restaurantJSON.get(PRICE_KEY);
+		this.photo = (String) this.restaurantJSON.get(PHOTO_KEY);
 
-		JSONArray allSchools = (JSONArray) this.restaurantObj.get(SCHOOLS_KEY);
+		JSONArray allSchools = (JSONArray) this.restaurantJSON.get(SCHOOLS_KEY);
 		for (Object currentSchool : allSchools) {
 			this.schools.add((String) currentSchool);
 		}
@@ -110,4 +112,115 @@ public class Restaurant {
 	public String getName() {
 		return name;
 	}
+
+	/**
+	 * A method to return a copy of the array containing the location (longitude
+	 * and latitude) of a restaurant.
+	 * 
+	 * @return an array of size 2 where array[0] is the longitude and array[1]
+	 *         is the latitude.
+	 */
+	public double[] getLocation() {
+		return location.clone();
+	}
+
+	/**
+	 * A method to return the city of a restaurant.
+	 * 
+	 * @return the city of the restaurant.
+	 */
+	public String getCity() {
+		return city;
+	}
+
+	/**
+	 * A method to return the street address of a restaurant.
+	 * 
+	 * @return the street address of the restaurant.
+	 */
+	public String getAddress() {
+		return address;
+	}
+
+	/**
+	 * A method to return the state of a restaurant.
+	 * 
+	 * @return the state of the restaurant.
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * A method to return the neighborhoods surrounding the restaurant.
+	 * 
+	 * @return the neighborhood(s) of the restaurant.
+	 */
+	public Set<String> getNeighbourhoods() {
+		return Collections.unmodifiableSet(neighbourhood);
+	}
+
+	/**
+	 * A method to return the type of the restaurant.
+	 * 
+	 * @return the type of the restaurant.
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * A method to return the categories of the restaurant.
+	 * 
+	 * @return the categories of the restaurant.
+	 */
+	public Set<String> getCategories() {
+		return Collections.unmodifiableSet(categories);
+	}
+
+	/**
+	 * A method to get the stars of the restaurant.
+	 * 
+	 * @return the stars of the restaurant.
+	 */
+	public double getStars() {
+		return stars;
+	}
+
+	/**
+	 * A method to get the review count of the restaurant.
+	 * 
+	 * @return the review count of the restaurant.
+	 */
+	public long getReviewCount() {
+		return reviewCount;
+	}
+
+	/**
+	 * A method to get the price of the restaurant.
+	 * 
+	 * @return the price of the restaurant.
+	 */
+	public long getPrice() {
+		return price;
+	}
+
+	/**
+	 * A method to get the url to a photo of the restaurant.
+	 * 
+	 * @return the url of a photo of the restaurant.
+	 */
+	public String getPhoto() {
+		return photo;
+	}
+
+	/**
+	 * A method to get the universities near the restaurant.
+	 * 
+	 * @return the universities near the restaurant.
+	 */
+	public Set<String> getSchools() {
+		return Collections.unmodifiableSet(schools);
+	}
+
 }
