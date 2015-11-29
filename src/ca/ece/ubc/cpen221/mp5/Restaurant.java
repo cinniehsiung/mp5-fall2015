@@ -237,15 +237,26 @@ public class Restaurant {
 		schoolsClone.addAll(schools);
 		return Collections.unmodifiableSet(schoolsClone);
 	}
+
 	/**
-	 * This method resturns a cloned version of the given restaurant.
+	 * This method returns a cloned version of the given restaurant.
 	 * 
 	 * @return The cloned restaurant.
 	 */
-	public Restaurant clone(){
-	    Restaurant clone = new Restaurant(this.restaurantJSON);
-	    
-	    return clone;
+	public Restaurant clone() {
+		Restaurant clone = new Restaurant(this.restaurantJSON);
+
+		return clone;
+	}
+
+	@Override
+	/**
+	 * The method returns the String representation of a restaurant. Its name.
+	 * 
+	 * @return the String representation of a restaurant.
+	 */
+	public String toString() {
+		return name;
 	}
 
 }
