@@ -1,26 +1,14 @@
 package ca.ece.ubc.cpen221.mp5;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 import java.util.Set;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 // TODO: Implement a server that will instantiate a database, 
 // process queries concurrently, etc.
 
@@ -43,11 +31,11 @@ public class RestaurantDBServer {
 	 *            the name of a file with user details in JSON format
 	 */
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
+		System.out.println("Making Database.");
 		this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
+		System.out.print("Finished Making Database.");
 
-		try (
-
-		ServerSocket serverSocket = new ServerSocket(port);
+		try (ServerSocket serverSocket = new ServerSocket(port);
 				Socket clientSocket = serverSocket.accept();
 
 				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -57,12 +45,13 @@ public class RestaurantDBServer {
 			String inputLine;
 			String outputLine;
 
+			out.println("Hello. Please enter your query:");
 			while ((inputLine = in.readLine()) != null) {
+				if (inputLine.equals("Bye.")) {
+					break;
+				}
 				outputLine = database.query(inputLine).toString();
 				out.println(outputLine);
-
-				if (outputLine.equals("Bye.") || inputLine.equals("Bye."))
-					break;
 			}
 
 			out.close();

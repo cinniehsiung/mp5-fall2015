@@ -20,23 +20,30 @@ public class RestaurantDBClient {
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
 			String fromServer;
-			while ((fromServer = in.readLine()) != null) {
-				System.out.println("Server: " + fromServer);
-				if (fromServer.equals("Bye."))
-					break;
-			}
-			String fromUser = stdIn.readLine();
-			if (fromUser != null) {
-				System.out.println("Client: " + fromUser);
-				out.println(fromUser);
+			String fromUser = null;
+
+			while (true) {
+				fromServer = in.readLine();
+				if (fromServer != null) {
+					System.out.println("Server: " + fromServer);
+				}
+
+				fromUser = stdIn.readLine();
+				if (fromUser != null) {
+					System.out.println("Client: " + fromUser);
+					if (fromUser.equals("Bye.")) {
+						break;
+					}
+					out.println(fromUser);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("IO connection failed");
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		RestaurantDBClient client = new RestaurantDBClient("yolo", Integer.parseInt(args[0]));
+		RestaurantDBClient client = new RestaurantDBClient(args[0], Integer.parseInt(args[1]));
 	}
 }
