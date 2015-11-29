@@ -15,7 +15,7 @@ public class TreeTestTest {
             
             TreeTest parser = new TreeTest();
             
-            String query = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price(1..2)";
+            String query = "in(Telegraph Ave) || (category(Chinese) || category(Italian)) && price(1..2)";
             
             Set<Restaurant> result = parser.parseQuery(query, testDB);
             

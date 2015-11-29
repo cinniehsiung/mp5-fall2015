@@ -65,6 +65,8 @@ public class TreeTest {
         private final int NAME_START_INDEX = 5;
         
         public Set<Restaurant> answerQuery(){
+            assert stack.size() == 1;
+            restaurantSet.addAll(stack.get(0));
             Set<Restaurant> clone = Collections.synchronizedSet(Collections.unmodifiableSet(restaurantSet));
             
             return clone;
@@ -72,6 +74,8 @@ public class TreeTest {
         
         @Override 
         public void exitQuery(@NotNull QueryGrammarParser.QueryContext ctx) {
+            
+           
         }
                 
         
