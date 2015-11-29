@@ -9,9 +9,12 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -138,6 +141,19 @@ public class RestaurantDBServer {
 	 */
 	public void addReview(String userReview) {
 		database.addReview(userReview);
+	}
+	
+	/**
+	 * This method responds to the queries given by a client by determining which request type it is responding to,
+	 * and searches for the appropriate set.
+	 * @param request
+	 * @param search
+	 * @return
+	 */
+	public Set<Restaurant> respondRequest (String request, String search){
+	    Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
+	    	    
+	    return Collections.unmodifiableSet(database.respondRequest(request, search));
 	}
 
 }

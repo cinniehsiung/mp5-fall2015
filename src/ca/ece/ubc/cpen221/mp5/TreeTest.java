@@ -1,5 +1,7 @@
 package ca.ece.ubc.cpen221.mp5;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -11,10 +13,15 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+
 public class TreeTest {
+    private RestaurantDB database;
+    
 
     
-    public static void parseQuery(String string) {
+    public void parseQuery(String string, RestaurantDB database) {
+        this.database = database;
+        
         // Create a stream of tokens using the lexer.
         CharStream stream = new ANTLRInputStream(string);
         QueryGrammarLexer lexer = new QueryGrammarLexer(stream);
@@ -47,30 +54,77 @@ public class TreeTest {
     
 
     
-    private static class QueryListener_QueryCreator extends QueryGrammarBaseListener {
+    private class QueryListener_QueryCreator extends QueryGrammarBaseListener {
         private Stack<String> stack = new Stack<String>();
+        private Set<Restaurant> restaurantSet = new HashSet<Restaurant>();
+        
+        private final int IN_START_INDEX = 3;
+        private final int CATEGORY_START_INDEX = 9;
+        private final int RATING_START_INDEX = 7;
+        private final int PRICE_START_INDEX = 6;
+        private final int NAME_START_INDEX = 5;
+                
         
         @Override 
         public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
             
-        }
-        
-        @Override
-        public void exitAtom(@NotNull QueryGrammarParser.AtomContext ctx) {
-            
-        }
+        }        
         
         @Override
         public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
             
         }
         
-    }
-    
-    public void main(String args[]){
-        String query = "in(Telegraph Ave) && (category(Chinese) || cateogry(Italian)) && price(1..2)";
-        
-        parseQuery(query);
+        @Override
+        public void exitAtom(@NotNull QueryGrammarParser.AtomContext ctx) {
+            String text = ctx.start.getText();
+            System.out.println(text); //debug purposes
+            
+            if(ctx.start.getType() == QueryGrammarParser.IN){
+                String search = text.substring(IN_START_INDEX, text.length() - 1);
+                System.out.println(search); //debug purposes
+                String request = text.substring(0, IN_START_INDEX-1);
+                System.out.println(request); //debug purposes
+
+                restaurantSet.addAll(database.respondRequest(request, search));
+            }
+            if(ctx.start.getType() == QueryGrammarParser.CATEGORY){
+                String search = text.substring(CATEGORY_START_INDEX, text.length() - 1);
+                System.out.println(search); //debug purposes
+                String request = text.substring(0, CATEGORY_START_INDEX-1);
+                System.out.println(request); //debug purposes
+
+                restaurantSet.addAll(database.respondRequest(request, search));
+
+            }
+            if(ctx.start.getType() == QueryGrammarParser.RATING){
+                String search = text.substring(RATING_START_INDEX, text.length() - 1);
+                System.out.println(search); //debug purposes
+                String request = text.substring(0, RATING_START_INDEX-1);
+                System.out.println(request); //debug purposes
+
+                restaurantSet.addAll(database.respondRequest(request, search));
+
+            }
+            if(ctx.start.getType() == QueryGrammarParser.PRICE){
+                String search = text.substring(PRICE_START_INDEX, text.length() - 1);
+                System.out.println(search); //debug purposes
+                String request = text.substring(0, PRICE_START_INDEX-1);
+                System.out.println(request); //debug purposes
+
+                restaurantSet.addAll(database.respondRequest(request, search));
+
+            }
+            if(ctx.start.getType() == QueryGrammarParser.NAME){
+                String search = text.substring(NAME_START_INDEX, text.length() - 1);
+                System.out.println(search); //debug purposes
+                String request = text.substring(0, NAME_START_INDEX-1);
+                System.out.println(request); //debug purposes
+
+                restaurantSet.addAll(database.respondRequest(request, search));
+
+            }
+        }
     }
   /*  
 

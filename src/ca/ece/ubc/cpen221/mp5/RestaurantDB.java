@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -263,5 +264,69 @@ public class RestaurantDB {
 		// Write specs, etc.
 		return null;
 	}
+	
+	
+	/**
+     * This method responds to the queries given by a client by determining which request type it is responding to,
+     * and searches for the appropriate set.
+     * @param request
+     * @param search
+     * @return
+     */
+	public Set<Restaurant> respondRequest (String request, String search){
+        Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
+        
+        if("in".equals(request)){
+            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+            while (restaurantItr.hasNext()) {
+                Restaurant currentRestaurant = restaurantItr.next();
+                if(currentRestaurant.getNeighbourhoods().contains(search)){
+                    results.add(currentRestaurant.clone());
+                }
+            }
+        }
+        
+        else if("category".equals(request)){
+            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+            while (restaurantItr.hasNext()) {
+                Restaurant currentRestaurant = restaurantItr.next();
+                if(currentRestaurant.getCategories().contains(search)){
+                    results.add(currentRestaurant.clone());
+                }
+            }
+        }
+        
+        else if("rating".equals(request)){
+            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+            while (restaurantItr.hasNext()) {
+                Restaurant currentRestaurant = restaurantItr.next();
+                if((double) request.charAt(0) <= currentRestaurant.getStars() && currentRestaurant.getStars() <= (double) request.charAt(request.length())){
+                    results.add(currentRestaurant.clone());
+                }
+            }
+        }
+        
+        else if("price".equals(request)){
+            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+            while (restaurantItr.hasNext()) {
+                Restaurant currentRestaurant = restaurantItr.next();
+                if((long) request.charAt(0) <= currentRestaurant.getPrice() && currentRestaurant.getPrice() <= (long)request.charAt(request.length())){
+                    results.add(currentRestaurant.clone());
+                }
+            }
+        }
+        
+        else if("name".equals(request)){
+            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+            while (restaurantItr.hasNext()) {
+                Restaurant currentRestaurant = restaurantItr.next();
+                if(currentRestaurant.getName().equals(request)){
+                    results.add(currentRestaurant.clone());
+                }
+            }
+        }
+                
+        return Collections.unmodifiableSet(results);
+    }
 
 }
