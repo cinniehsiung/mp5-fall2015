@@ -308,7 +308,13 @@ public class RestaurantDB {
             Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
             while (restaurantItr.hasNext()) {
                 Restaurant currentRestaurant = restaurantItr.next();
-                if((double) request.charAt(0) <= currentRestaurant.getStars() && currentRestaurant.getStars() <= (double) request.charAt(request.length())){
+                
+                double lowerbound = Character.getNumericValue(search.charAt(0));
+                double upperbound = Character.getNumericValue(search.charAt(3));
+                
+                double rating = (int) currentRestaurant.getStars();
+                
+                if(rating >= lowerbound && rating <= upperbound){
                     results.add(currentRestaurant.clone());
                 }
             }
@@ -318,7 +324,15 @@ public class RestaurantDB {
             Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
             while (restaurantItr.hasNext()) {
                 Restaurant currentRestaurant = restaurantItr.next();
-                if((long) request.charAt(0) <= currentRestaurant.getPrice() && currentRestaurant.getPrice() <= (long)request.charAt(request.length())){
+                
+                int lowerbound = Character.getNumericValue(search.charAt(0));
+                int upperbound = Character.getNumericValue(search.charAt(3));
+                
+                int price = (int) currentRestaurant.getPrice();
+                
+                if(price >= lowerbound && price <= upperbound){
+                    System.out.println(currentRestaurant.getPrice());
+                    System.out.println(search);
                     results.add(currentRestaurant.clone());
                 }
             }
@@ -328,7 +342,7 @@ public class RestaurantDB {
             Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
             while (restaurantItr.hasNext()) {
                 Restaurant currentRestaurant = restaurantItr.next();
-                if(currentRestaurant.getName().equals(request)){
+                if(currentRestaurant.getName().equals(search)){
                     results.add(currentRestaurant.clone());
                 }
             }
