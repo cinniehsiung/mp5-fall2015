@@ -8,32 +8,48 @@ import java.net.Socket;
 
 public class RestaurantDBClient {
 
+	/**
+	 * The constructor for restaurantDBClient that speaks to RestaurantDBServer.
+	 * 
+	 * @param hostname
+	 *            the hostname of the computer running RestaurantDBServer
+	 * @param port
+	 *            the remote port to listen to, the same as RestaurantDBServer
+	 */
 	public RestaurantDBClient(String hostname, int port) {
 		try (
+				// try connecting the client's socket to the server's socket
+				Socket echoSocket = new Socket(hostname, port);
 
-		Socket echoSocket = new Socket(hostname, port);
+				// create streams to write to and from the socket/server
 				PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 
 		) {
 
+			// initialize a reader that reads from the console input
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
 			String fromServer;
 			String fromUser = null;
 
+			// continue reading until the user inputs "Bye."
 			while (true) {
+				// if the server sends something, then print to the console
 				fromServer = in.readLine();
 				if (fromServer != null) {
 					System.out.println("Server: " + fromServer);
 				}
 
+				// if the user writes something
 				fromUser = stdIn.readLine();
 				if (fromUser != null) {
+					// print to the console for verification purposes
 					System.out.println("Client: " + fromUser);
 					if (fromUser.equals("Bye.")) {
 						break;
 					}
+					// as well as print to the socket and thus to the server
 					out.println(fromUser);
 				}
 			}

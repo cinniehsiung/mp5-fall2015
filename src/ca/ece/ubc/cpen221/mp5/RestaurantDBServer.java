@@ -35,25 +35,40 @@ public class RestaurantDBServer {
 		this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
 		System.out.print("Finished Making Database.");
 
-		try (ServerSocket serverSocket = new ServerSocket(port);
+		try (
+				// listen to the specified port and bind to it
+				ServerSocket serverSocket = new ServerSocket(port);
+				// if the server successfully binds to the port, then accept a
+				// connection from a client
 				Socket clientSocket = serverSocket.accept();
 
+				// get streams to communicate to and from the client from the
+				// socket
 				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 		) {
+			// if initializing is successful then:
 			String inputLine;
 			String outputLine;
 
+			// first prompt for a query
 			out.println("Hello. Please enter your query:");
+
+			// now continue reading from the socket until the client says
+			// "Bye."
 			while ((inputLine = in.readLine()) != null) {
 				if (inputLine.equals("Bye.")) {
 					break;
 				}
+
+				// when the client enters a query, process it
 				outputLine = database.query(inputLine).toString();
+				// then print the answer to the socket
 				out.println(outputLine);
 			}
 
+			// when there is nothing more to say close everything
 			out.close();
 			in.close();
 			clientSocket.close();
