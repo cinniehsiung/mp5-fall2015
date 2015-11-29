@@ -262,7 +262,9 @@ public class RestaurantDB {
 	public Set<Restaurant> query(String queryString) {
 		// TODO: Implement this method
 		// Write specs, etc.
-		return null;
+		
+		TreeTest test = new TreeTest();
+		return test.parseQuery(queryString, this);
 	}
 	
 	
