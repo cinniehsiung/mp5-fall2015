@@ -46,6 +46,7 @@ WHITESPACE : [ \t\r\n]+ -> skip ;
  *    *** Antlr requires grammar nonterminals to be lowercase, like html, normal, and italic.
  */
 
+
 query : (LPAREN? orExpr RPAREN? | LPAREN? andExpr RPAREN?)+ EOF; 
 orExpr : atom? (OR (atom|query))+ ;
 andExpr : atom? (AND (atom|query))+ ;

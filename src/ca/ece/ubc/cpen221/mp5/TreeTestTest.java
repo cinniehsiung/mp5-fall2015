@@ -2,24 +2,31 @@ package ca.ece.ubc.cpen221.mp5;
 
 import static org.junit.Assert.*;
 
+import java.util.Set;
+
 import org.junit.Test;
 
 public class TreeTestTest {
 
     @Test
     public void test() {
-       
+            RestaurantDB testDB = new RestaurantDB("data/restaurants.json", "data/reviews.json",
+                "data/users.json");
+            
+            TreeTest parser = new TreeTest();
+            
             String query = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price(1..2)";
             
-            TreeTest.parseQuery(query);
+            Set<Restaurant> result = parser.parseQuery(query, testDB);
+            
+            for(Restaurant current : result){
+                System.out.println(current.getName());
+            }
+            if(result.isEmpty()){
+                System.out.println("no results");
+            }
     }
     
-    @Test
-    public void test2() {
-       
-            String query = "in(Telegraph Ave) || (category(Italian) && price(1..2) && category(Chinese))";
-            
-            TreeTest.parseQuery(query);
-    }
+   
 
 }

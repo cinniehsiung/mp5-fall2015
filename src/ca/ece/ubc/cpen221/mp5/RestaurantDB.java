@@ -280,7 +280,13 @@ public class RestaurantDB {
             Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
             while (restaurantItr.hasNext()) {
                 Restaurant currentRestaurant = restaurantItr.next();
-                if(currentRestaurant.getNeighbourhoods().contains(search)){
+                
+                Set<String> neighbourhoods = currentRestaurant.getNeighbourhoods();
+                
+                for(String current : neighbourhoods){
+                    System.out.println(current);                }
+                
+                if(neighbourhoods.contains(search)){
                     results.add(currentRestaurant.clone());
                 }
             }
@@ -326,7 +332,7 @@ public class RestaurantDB {
             }
         }
                 
-        return Collections.unmodifiableSet(results);
+        return results;
     }
 
 }

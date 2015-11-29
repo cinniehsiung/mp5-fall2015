@@ -1,5 +1,6 @@
 package ca.ece.ubc.cpen221.mp5;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -13,13 +14,12 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-
 public class TreeTest {
     private RestaurantDB database;
     
 
     
-    public void parseQuery(String string, RestaurantDB database) {
+    public Set<Restaurant> parseQuery(String string, RestaurantDB database) {
         this.database = database;
         
         // Create a stream of tokens using the lexer.
@@ -49,29 +49,62 @@ public class TreeTest {
         walker.walk(listener, tree);
         
         // return the Document value that the listener created
-        return;
+        return listener.answerQuery();
     }
     
 
     
     private class QueryListener_QueryCreator extends QueryGrammarBaseListener {
-        private Stack<String> stack = new Stack<String>();
-        private Set<Restaurant> restaurantSet = new HashSet<Restaurant>();
+        private Stack<Set<Restaurant>> stack = new Stack<Set<Restaurant>>();;
+        private Set<Restaurant> restaurantSet = Collections.synchronizedSet(new HashSet<Restaurant>());
         
         private final int IN_START_INDEX = 3;
         private final int CATEGORY_START_INDEX = 9;
         private final int RATING_START_INDEX = 7;
         private final int PRICE_START_INDEX = 6;
         private final int NAME_START_INDEX = 5;
+        
+        public Set<Restaurant> answerQuery(){
+            Set<Restaurant> clone = Collections.synchronizedSet(Collections.unmodifiableSet(restaurantSet));
+            
+            return clone;
+        }
+        
+        @Override 
+        public void exitQuery(@NotNull QueryGrammarParser.QueryContext ctx) {
+        }
                 
         
         @Override 
         public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
+            if (ctx.OR() != null) {
+                Set<Restaurant> result1 = stack.pop();
+                Set<Restaurant> result2 = stack.pop();
+                
+                result1.addAll(result2);
+                
+                stack.push(result1);
+                
+            } else {
+                // do nothing, because we just matched a literal and its BooleanLiteral is already on the stack
+            }
             
         }        
         
         @Override
         public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
+                      
+            if (ctx.AND() != null) {
+                Set<Restaurant> result1 = stack.pop();
+                Set<Restaurant> result2 = stack.pop();
+                
+                result1.retainAll(result2);
+                
+                stack.push(result1);
+                
+            } else {
+                // do nothing, because we just matched a literal and its BooleanLiteral is already on the stack
+            }
             
         }
         
@@ -86,43 +119,44 @@ public class TreeTest {
                 String request = text.substring(0, IN_START_INDEX-1);
                 System.out.println(request); //debug purposes
 
-                restaurantSet.addAll(database.respondRequest(request, search));
+                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+                stack.push(atomResults);
             }
-            if(ctx.start.getType() == QueryGrammarParser.CATEGORY){
+            else if(ctx.start.getType() == QueryGrammarParser.CATEGORY){
                 String search = text.substring(CATEGORY_START_INDEX, text.length() - 1);
                 System.out.println(search); //debug purposes
                 String request = text.substring(0, CATEGORY_START_INDEX-1);
                 System.out.println(request); //debug purposes
 
-                restaurantSet.addAll(database.respondRequest(request, search));
-
+                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+                stack.push(atomResults);
             }
-            if(ctx.start.getType() == QueryGrammarParser.RATING){
+            else if(ctx.start.getType() == QueryGrammarParser.RATING){
                 String search = text.substring(RATING_START_INDEX, text.length() - 1);
                 System.out.println(search); //debug purposes
                 String request = text.substring(0, RATING_START_INDEX-1);
                 System.out.println(request); //debug purposes
 
-                restaurantSet.addAll(database.respondRequest(request, search));
-
+                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+                stack.push(atomResults);
             }
-            if(ctx.start.getType() == QueryGrammarParser.PRICE){
+            else if(ctx.start.getType() == QueryGrammarParser.PRICE){
                 String search = text.substring(PRICE_START_INDEX, text.length() - 1);
                 System.out.println(search); //debug purposes
                 String request = text.substring(0, PRICE_START_INDEX-1);
                 System.out.println(request); //debug purposes
 
-                restaurantSet.addAll(database.respondRequest(request, search));
-
+                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+                stack.push(atomResults);
             }
-            if(ctx.start.getType() == QueryGrammarParser.NAME){
+            else if(ctx.start.getType() == QueryGrammarParser.NAME){
                 String search = text.substring(NAME_START_INDEX, text.length() - 1);
                 System.out.println(search); //debug purposes
                 String request = text.substring(0, NAME_START_INDEX-1);
                 System.out.println(request); //debug purposes
 
-                restaurantSet.addAll(database.respondRequest(request, search));
-
+                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+                stack.push(atomResults);
             }
         }
     }
