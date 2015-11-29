@@ -57,15 +57,22 @@ public class RestaurantDBServer {
 
 			// now continue reading from the socket until the client says
 			// "Bye."
-			while ((inputLine = in.readLine()) != null) {
-				if (inputLine.equals("Bye.")) {
-					break;
-				}
+			while (true) {
+				inputLine = in.readLine();
 
-				// when the client enters a query, process it
-				outputLine = database.query(inputLine).toString();
-				// then print the answer to the socket
-				out.println(outputLine);
+				if (inputLine != null) {
+					if (inputLine.equals("Bye.")) {
+						break;
+					}
+
+					// when the client enters a query, process it
+					outputLine = database.query(inputLine).toString();
+					if ("[]".equals(outputLine)) {
+						outputLine = "No Results Found. Sorry :(";
+					}
+					// then print the answer to the socket
+					out.println(outputLine);
+				}
 			}
 
 			// when there is nothing more to say close everything

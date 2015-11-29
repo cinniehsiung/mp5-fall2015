@@ -251,7 +251,7 @@ public class Restaurant {
 
 	@Override
 	/**
-	 * The method returns the String representation of a restaurant. Its name.
+	 * The method returns the String representation of a restaurant -- its name.
 	 * 
 	 * @return the String representation of a restaurant.
 	 */
