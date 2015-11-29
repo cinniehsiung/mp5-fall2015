@@ -43,26 +43,25 @@ public class RestaurantDBServer {
 	 *            the name of a file with user details in JSON format
 	 */
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
-		try {
+		this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
 
-			ServerSocket serverSocket = new ServerSocket(port);
-			Socket clientSocket = serverSocket.accept();
+		try (
 
-			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		ServerSocket serverSocket = new ServerSocket(port);
+				Socket clientSocket = serverSocket.accept();
 
+				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+		) {
 			String inputLine;
 			String outputLine;
 
-			this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
-
 			while ((inputLine = in.readLine()) != null) {
-				outputLine = database.query(inputLine).toString(); // might need
-																	// to change
-																	// this part
+				outputLine = database.query(inputLine).toString();
 				out.println(outputLine);
 
-				if (outputLine.equals("Bye."))
+				if (outputLine.equals("Bye.") || inputLine.equals("Bye."))
 					break;
 			}
 
@@ -73,8 +72,12 @@ public class RestaurantDBServer {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException();
+			System.out.println("Can't listen on the port or can't listen for a connection.");
 		}
+	}
+
+	public static void main(String[] args) {
+		RestaurantDBServer server = new RestaurantDBServer(Integer.parseInt(args[0]), args[1], args[2], args[3]);
 	}
 
 	/**
@@ -142,18 +145,19 @@ public class RestaurantDBServer {
 	public void addReview(String userReview) {
 		database.addReview(userReview);
 	}
-	
+
 	/**
-	 * This method responds to the queries given by a client by determining which request type it is responding to,
-	 * and searches for the appropriate set.
+	 * This method responds to the queries given by a client by determining
+	 * which request type it is responding to, and searches for the appropriate
+	 * set.
+	 * 
 	 * @param request
 	 * @param search
 	 * @return
 	 */
-	public Set<Restaurant> respondRequest (String request, String search){
-	    Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
-	    	    
-	    return Collections.unmodifiableSet(database.respondRequest(request, search));
+	public Set<Restaurant> respondRequest(String request, String search) {
+		Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
+		return Collections.unmodifiableSet(database.respondRequest(request, search));
 	}
 
 }
