@@ -9,17 +9,17 @@ import java.util.Set;
 // TODO: Implement a server that will instantiate a database, 
 // process queries concurrently, etc.
 
-public class RestaurantDBServer implements Runnable {
+public class RestaurantDBServer {
 
 	// class fields
 	private final RestaurantDB database;
+	private final int port;
 	private ServerSocket serverSocket;
 	private boolean serverOn = true;
-	private Thread runningThread;
-	private int port;
 
 	/**
-	 * The constructor for RestaurantDBServer.
+	 * The constructor for RestaurantDBServer. Initializes the restaurant
+	 * database and listens for connections on port.
 	 * 
 	 * @param port
 	 *            a port number, 0 <= port M = 65535
@@ -37,16 +37,18 @@ public class RestaurantDBServer implements Runnable {
 		System.out.println("Making Database.");
 		this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
 		System.out.println("Finished Making Database.");
-	}
-
-	public void run() {
-		synchronized (this) {
-			this.runningThread = Thread.currentThread();
-		}
 
 		openServerSocket();
+	}
+
+	/**
+	 * Run the server, listening for connections and handling them.
+	 */
+	public void serve() {
+
 		while (serverOn) {
 			Socket clientSocket = null;
+
 			try {
 				// listen until a client connection is made
 				clientSocket = this.serverSocket.accept();
@@ -60,41 +62,50 @@ public class RestaurantDBServer implements Runnable {
 					throw new IllegalArgumentException("Error making socket.");
 				}
 			}
+
 			// once a client connection has been made
 			// make a new thread to process their queries
 			new Thread(new RestaurantDBWorker(clientSocket, this.database)).start();
 		}
-
-		closeServerSocket();
-		System.out.println("Server Offline.");
 	}
 
 	/**
 	 * Helper method to attempt to open and bind to the server socket.
 	 */
 	private void openServerSocket() {
+		System.out.println("Booting up server...");
 		try {
 			this.serverSocket = new ServerSocket(this.port);
+			serverOn = true;
+			System.out.println("Server Online.");
 		} catch (IOException e) {
-			throw new IllegalArgumentException("Cannot open port" + port + ".");
+			serverOn = false;
+			System.err.println("Cannot open port" + port + ".");
 		}
 	}
 
 	/**
-	 * Helper method to attempt to closer the server socket.
+	 * Helper method to attempt to close the server socket.
 	 */
-	private synchronized void closeServerSocket() {
+	private void closeServerSocket() {
+		System.out.println("Shutting down server...");
 		try {
 			serverSocket.close();
+			serverOn = false;
+			System.out.println("Server Offline.");
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Error closing Server.");
+			System.err.println("Error shutting down server.");
 		}
 	}
 
 	public static void main(String[] args) {
 		RestaurantDBServer server = new RestaurantDBServer(Integer.parseInt(args[0]), args[1], args[2], args[3]);
-		new Thread(server).start();
+		server.serve();
+
+		server.closeServerSocket();
+
+		return;
 	}
 
 	/**

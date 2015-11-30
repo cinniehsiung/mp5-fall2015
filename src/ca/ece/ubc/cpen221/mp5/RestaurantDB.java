@@ -262,93 +262,98 @@ public class RestaurantDB {
 	public Set<Restaurant> query(String queryString) {
 		// TODO: Implement this method
 		// Write specs, etc.
-		
+
 		TreeTest test = new TreeTest();
 		return test.parseQuery(queryString, this);
 	}
-	
-	
+
 	/**
-     * This method responds to the queries given by a client by determining which request type it is responding to,
-     * and searches for the appropriate set.
-     * @param request
-     * @param search
-     * @return
-     */
-	public Set<Restaurant> respondRequest (String request, String search){
-        Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
-        
-        if("in".equals(request)){
-            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
-            while (restaurantItr.hasNext()) {
-                Restaurant currentRestaurant = restaurantItr.next();
-                
-                Set<String> neighbourhoods = currentRestaurant.getNeighbourhoods();
-                
-                for(String current : neighbourhoods){
-                    System.out.println(current);                }
-                
-                if(neighbourhoods.contains(search)){
-                    results.add(currentRestaurant.clone());
-                }
-            }
-        }
-        
-        else if("category".equals(request)){
-            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
-            while (restaurantItr.hasNext()) {
-                Restaurant currentRestaurant = restaurantItr.next();
-                if(currentRestaurant.getCategories().contains(search)){
-                    results.add(currentRestaurant.clone());
-                }
-            }
-        }
-        
-        else if("rating".equals(request)){
-            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
-            while (restaurantItr.hasNext()) {
-                Restaurant currentRestaurant = restaurantItr.next();
-                
-                double lowerbound = Character.getNumericValue(search.charAt(0));
-                double upperbound = Character.getNumericValue(search.charAt(3));
-                
-                double rating = (int) currentRestaurant.getStars();
-                
-                if(rating >= lowerbound && rating <= upperbound){
-                    results.add(currentRestaurant.clone());
-                }
-            }
-        }
-        
-        else if("price".equals(request)){
-            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
-            while (restaurantItr.hasNext()) {
-                Restaurant currentRestaurant = restaurantItr.next();
-                
-                int lowerbound = Character.getNumericValue(search.charAt(0));
-                int upperbound = Character.getNumericValue(search.charAt(3));
-                
-                int price = (int) currentRestaurant.getPrice();
-                
-                if(price >= lowerbound && price <= upperbound){
-                    System.out.println(currentRestaurant.getPrice());
-                    System.out.println(search);
-                    results.add(currentRestaurant.clone());
-                }
-            }
-        }
-        
-        else if("name".equals(request)){
-            Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
-            while (restaurantItr.hasNext()) {
-                Restaurant currentRestaurant = restaurantItr.next();
-                if(currentRestaurant.getName().equals(search)){
-                    results.add(currentRestaurant.clone());
-                }
-            }
-        }
-                
-        return results;
-    }
+	 * This method responds to the queries given by a client by determining
+	 * which request type it is responding to, and searches for the appropriate
+	 * set.
+	 * 
+	 * @param request
+	 * @param search
+	 * @return
+	 */
+	public Set<Restaurant> respondRequest(String request, String search) {
+		Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
+
+		if ("in".equals(request)) {
+			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+			while (restaurantItr.hasNext()) {
+				Restaurant currentRestaurant = restaurantItr.next();
+
+				Set<String> neighbourhoods = currentRestaurant.getNeighbourhoods();
+
+				for (String current : neighbourhoods) {
+					System.out.println(current);
+				}
+
+				if (neighbourhoods.contains(search)) {
+					results.add(currentRestaurant.clone());
+				}
+			}
+		}
+
+		else if ("category".equals(request)) {
+			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+			while (restaurantItr.hasNext()) {
+				Restaurant currentRestaurant = restaurantItr.next();
+				if (currentRestaurant.getCategories().contains(search)) {
+					results.add(currentRestaurant.clone());
+				}
+			}
+		}
+
+		else if ("rating".equals(request)) {
+			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+			while (restaurantItr.hasNext()) {
+				Restaurant currentRestaurant = restaurantItr.next();
+
+				double lowerbound = Character.getNumericValue(search.charAt(0));
+				double upperbound = Character.getNumericValue(search.charAt(3));
+
+				double rating = currentRestaurant.getStars();
+
+				if (rating >= lowerbound && rating <= upperbound) {
+					System.out.println("Lowerbound: " + lowerbound);
+					System.out.println("Rating: " + rating);
+					System.out.println("Upperbound: " + upperbound);
+					results.add(currentRestaurant.clone());
+				}
+			}
+		}
+
+		else if ("price".equals(request)) {
+			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+			while (restaurantItr.hasNext()) {
+				Restaurant currentRestaurant = restaurantItr.next();
+
+				int lowerbound = Character.getNumericValue(search.charAt(0));
+				int upperbound = Character.getNumericValue(search.charAt(3));
+
+				int price = (int) currentRestaurant.getPrice();
+
+				if (price >= lowerbound && price <= upperbound) {
+					System.out.println(currentRestaurant.getPrice());
+					System.out.println(search);
+					results.add(currentRestaurant.clone());
+				}
+			}
+		}
+
+		else if ("name".equals(request)) {
+			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+			while (restaurantItr.hasNext()) {
+				Restaurant currentRestaurant = restaurantItr.next();
+				if (currentRestaurant.getName().equals(search)) {
+					results.add(currentRestaurant.clone());
+				}
+			}
+		}
+
+		return results;
+	}
 
 }

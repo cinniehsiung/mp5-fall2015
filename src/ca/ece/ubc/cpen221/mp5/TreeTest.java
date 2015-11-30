@@ -15,159 +15,163 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class TreeTest {
-    private RestaurantDB database;
-    
+	private RestaurantDB database;
 
-    
-    public Set<Restaurant> parseQuery(String string, RestaurantDB database) {
-        this.database = database;
-        
-        // Create a stream of tokens using the lexer.
-        CharStream stream = new ANTLRInputStream(string);
-        QueryGrammarLexer lexer = new QueryGrammarLexer(stream);
-        lexer.reportErrorsAsExceptions();
-        TokenStream tokens = new CommonTokenStream(lexer);
-        
-        // Feed the tokens into the parser.
-        QueryGrammarParser parser = new QueryGrammarParser(tokens);
-        parser.reportErrorsAsExceptions();
-        
-        // Generate the parse tree using the starter rule.
-        ParseTree tree = parser.orExpr(); // starter rule is an orExpression
-        
-        // debugging option #1: print the tree to the console
-        System.err.println(tree.toStringTree(parser));
+	public Set<Restaurant> parseQuery(String string, RestaurantDB database) {
+		this.database = database;
 
-        // debugging option #2: show the tree in a window
-        ((RuleContext)tree).inspect(parser);
+		// Create a stream of tokens using the lexer.
+		CharStream stream = new ANTLRInputStream(string);
+		QueryGrammarLexer lexer = new QueryGrammarLexer(stream);
+		lexer.reportErrorsAsExceptions();
+		TokenStream tokens = new CommonTokenStream(lexer);
 
-        // debugging option #3: walk the tree with a listener
-        //new ParseTreeWalker().walk(new FormulaListener_PrintEverything(), tree);
-        
-        ParseTreeWalker walker = new ParseTreeWalker();
-        QueryListener_QueryCreator listener = new QueryListener_QueryCreator();
-        walker.walk(listener, tree);
-        
-        // return the Document value that the listener created
-        return listener.answerQuery();
-    }
-    
+		// Feed the tokens into the parser.
+		QueryGrammarParser parser = new QueryGrammarParser(tokens);
+		parser.reportErrorsAsExceptions();
 
-    
-    private class QueryListener_QueryCreator extends QueryGrammarBaseListener {
-        private Stack<Set<Restaurant>> stack = new Stack<Set<Restaurant>>();;
-        private Set<Restaurant> restaurantSet = Collections.synchronizedSet(new HashSet<Restaurant>());
-        
-        private final int IN_START_INDEX = 3;
-        private final int CATEGORY_START_INDEX = 9;
-        private final int RATING_START_INDEX = 7;
-        private final int PRICE_START_INDEX = 6;
-        private final int NAME_START_INDEX = 5;
-        
-        public Set<Restaurant> answerQuery(){
-            assert stack.size() == 1;
-            restaurantSet.addAll(stack.get(0));
-            Set<Restaurant> clone = Collections.synchronizedSet(Collections.unmodifiableSet(restaurantSet));
-            
-            return clone;
-        }  
-        
-        @Override 
-        public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
-            if (ctx.OR() != null && ctx.getChildCount() > 1) {
-                Set<Restaurant> result1 = stack.pop();
-                Set<Restaurant> result2 = stack.pop();
-                
-                result1.addAll(result2);
-                
-                stack.push(result1);
-                
-            } else {
-                // do nothing, because we just matched a literal and its BooleanLiteral is already on the stack
-            }
-            
-        }        
-        
-        @Override
-        public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
-                      
-            if (ctx.AND() != null && ctx.getChildCount() > 1) {
-                Set<Restaurant> result1 = stack.pop();
-                Set<Restaurant> result2 = stack.pop();
-                
-                result1.retainAll(result2);
-                
-                stack.push(result1);
-                
-            } else {
-                // do nothing, because we just matched a literal and its BooleanLiteral is already on the stack
-            }
-            
-        }
-        
-        @Override
-        public void exitAtom(@NotNull QueryGrammarParser.AtomContext ctx) {
-            String text = ctx.start.getText();
-            System.out.println(text); //debug purposes
-            
-            if(ctx.start.getType() == QueryGrammarParser.IN){
-                String search = text.substring(IN_START_INDEX, text.length() - 1);
-                System.out.println(search); //debug purposes
-                String request = text.substring(0, IN_START_INDEX-1);
-                System.out.println(request); //debug purposes
+		// Generate the parse tree using the starter rule.
+		ParseTree tree = parser.orExpr(); // starter rule is an orExpression
 
-                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
-                stack.push(atomResults);
-            }
-            else if(ctx.start.getType() == QueryGrammarParser.CATEGORY){
-                String search = text.substring(CATEGORY_START_INDEX, text.length() - 1);
-                System.out.println(search); //debug purposes
-                String request = text.substring(0, CATEGORY_START_INDEX-1);
-                System.out.println(request); //debug purposes
+		// debugging option #1: print the tree to the console
+		System.err.println(tree.toStringTree(parser));
 
-                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
-                stack.push(atomResults);
-            }
-            else if(ctx.start.getType() == QueryGrammarParser.RATING){
-                String search = text.substring(RATING_START_INDEX, text.length() - 1);
-                System.out.println(search); //debug purposes
-                String request = text.substring(0, RATING_START_INDEX-1);
-                System.out.println(request); //debug purposes
+		// debugging option #2: show the tree in a window
+		((RuleContext) tree).inspect(parser);
 
-                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
-                stack.push(atomResults);
-            }
-            else if(ctx.start.getType() == QueryGrammarParser.PRICE){
-                String search = text.substring(PRICE_START_INDEX, text.length() - 1);
-                System.out.println(search); //debug purposes
-                String request = text.substring(0, PRICE_START_INDEX-1);
-                System.out.println(request); //debug purposes
+		// debugging option #3: walk the tree with a listener
+		// new ParseTreeWalker().walk(new FormulaListener_PrintEverything(),
+		// tree);
 
-                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
-                stack.push(atomResults);
-            }
-            else if(ctx.start.getType() == QueryGrammarParser.NAME){
-                String search = text.substring(NAME_START_INDEX, text.length() - 1);
-                System.out.println(search); //debug purposes
-                String request = text.substring(0, NAME_START_INDEX-1);
-                System.out.println(request); //debug purposes
+		ParseTreeWalker walker = new ParseTreeWalker();
+		QueryListener_QueryCreator listener = new QueryListener_QueryCreator();
+		walker.walk(listener, tree);
 
-                Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
-                stack.push(atomResults);
-            }
-        }
-    }
-  /*  
+		// return the Document value that the listener created
+		return listener.answerQuery();
+	}
 
-    private static class FormulaListener_PrintEverything extends FormulaBaseListener {
-        public void enterFormula(FormulaParser.FormulaContext ctx) { System.err.println("entering formula " + ctx.getText()); }
-        public void exitFormula(FormulaParser.FormulaContext ctx) { System.err.println("exiting formula " + ctx.getText()); }
+	private class QueryListener_QueryCreator extends QueryGrammarBaseListener {
+		private Stack<Set<Restaurant>> stack = new Stack<Set<Restaurant>>();;
+		private Set<Restaurant> restaurantSet = Collections.synchronizedSet(new HashSet<Restaurant>());
 
-        public void enterConjunction(FormulaParser.ConjunctionContext ctx) { System.err.println("entering conjunction " + ctx.getText()); }
-        public void exitConjunction(FormulaParser.ConjunctionContext ctx) { System.err.println("exiting conjunction " + ctx.getText()); }
+		private final int IN_START_INDEX = 3;
+		private final int CATEGORY_START_INDEX = 9;
+		private final int RATING_START_INDEX = 7;
+		private final int PRICE_START_INDEX = 6;
+		private final int NAME_START_INDEX = 5;
 
-        public void enterLiteral(FormulaParser.LiteralContext ctx) { System.err.println("entering literal " + ctx.getText()); }
-        public void exitLiteral(FormulaParser.LiteralContext ctx) { System.err.println("exiting literal " + ctx.getText()); }
-    }*/
-    
+		public Set<Restaurant> answerQuery() {
+			assert stack.size() == 1;
+			restaurantSet.addAll(stack.get(0));
+			Set<Restaurant> clone = Collections.synchronizedSet(Collections.unmodifiableSet(restaurantSet));
+
+			return clone;
+		}
+
+		@Override
+		public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
+			if (ctx.OR() != null && ctx.getChildCount() > 1) {
+				while (stack.size() > 1) {
+					Set<Restaurant> result1 = stack.pop();
+					Set<Restaurant> result2 = stack.pop();
+
+					result1.addAll(result2);
+
+					stack.push(result1);
+				}
+			} else {
+				// do nothing, because we just matched a literal and its
+				// BooleanLiteral is already on the stack
+			}
+
+		}
+
+		@Override
+		public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
+
+			if (ctx.AND() != null && ctx.getChildCount() > 1) {
+				while (stack.size() > 1) {
+					Set<Restaurant> result1 = stack.pop();
+					Set<Restaurant> result2 = stack.pop();
+
+					result1.retainAll(result2);
+
+					stack.push(result1);
+				}
+			} else {
+				// do nothing, because we just matched a literal and its
+				// BooleanLiteral is already on the stack
+			}
+
+		}
+
+		@Override
+		public void exitAtom(@NotNull QueryGrammarParser.AtomContext ctx) {
+			String text = ctx.start.getText();
+			System.out.println(text); // debug purposes
+
+			if (ctx.start.getType() == QueryGrammarParser.IN) {
+				String search = text.substring(IN_START_INDEX, text.length() - 1);
+				System.out.println(search); // debug purposes
+				String request = text.substring(0, IN_START_INDEX - 1);
+				System.out.println(request); // debug purposes
+
+				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+				stack.push(atomResults);
+			} else if (ctx.start.getType() == QueryGrammarParser.CATEGORY) {
+				String search = text.substring(CATEGORY_START_INDEX, text.length() - 1);
+				System.out.println(search); // debug purposes
+				String request = text.substring(0, CATEGORY_START_INDEX - 1);
+				System.out.println(request); // debug purposes
+
+				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+				stack.push(atomResults);
+			} else if (ctx.start.getType() == QueryGrammarParser.RATING) {
+				String search = text.substring(RATING_START_INDEX, text.length() - 1);
+				System.out.println(search); // debug purposes
+				String request = text.substring(0, RATING_START_INDEX - 1);
+				System.out.println(request); // debug purposes
+
+				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+				stack.push(atomResults);
+			} else if (ctx.start.getType() == QueryGrammarParser.PRICE) {
+				String search = text.substring(PRICE_START_INDEX, text.length() - 1);
+				System.out.println(search); // debug purposes
+				String request = text.substring(0, PRICE_START_INDEX - 1);
+				System.out.println(request); // debug purposes
+
+				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+				stack.push(atomResults);
+			} else if (ctx.start.getType() == QueryGrammarParser.NAME) {
+				String search = text.substring(NAME_START_INDEX, text.length() - 1);
+				System.out.println(search); // debug purposes
+				String request = text.substring(0, NAME_START_INDEX - 1);
+				System.out.println(request); // debug purposes
+
+				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
+				stack.push(atomResults);
+			}
+		}
+	}
+	/*
+	 * 
+	 * private static class FormulaListener_PrintEverything extends
+	 * FormulaBaseListener { public void
+	 * enterFormula(FormulaParser.FormulaContext ctx) { System.err.println(
+	 * "entering formula " + ctx.getText()); } public void
+	 * exitFormula(FormulaParser.FormulaContext ctx) { System.err.println(
+	 * "exiting formula " + ctx.getText()); }
+	 * 
+	 * public void enterConjunction(FormulaParser.ConjunctionContext ctx) {
+	 * System.err.println("entering conjunction " + ctx.getText()); } public
+	 * void exitConjunction(FormulaParser.ConjunctionContext ctx) {
+	 * System.err.println("exiting conjunction " + ctx.getText()); }
+	 * 
+	 * public void enterLiteral(FormulaParser.LiteralContext ctx) {
+	 * System.err.println("entering literal " + ctx.getText()); } public void
+	 * exitLiteral(FormulaParser.LiteralContext ctx) { System.err.println(
+	 * "exiting literal " + ctx.getText()); } }
+	 */
+
 }

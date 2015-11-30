@@ -12,14 +12,18 @@ public class RestaurantDBWorker implements Runnable {
 	private RestaurantDB database;
 
 	/**
-	 * Helper class to actually help the clients. Handles one client at a time.
+	 * Helper class to handle one client connection. Returns when client
+	 * disconnects.
 	 * 
 	 * @param clientSocket
+	 *            socket where client is connected
 	 * @param database
+	 *            the database to search through
 	 */
 	public RestaurantDBWorker(Socket clientSocket, RestaurantDB database) {
 		this.clientSocket = clientSocket;
 		this.database = database;
+		System.out.println("Client connected.");
 	}
 
 	@Override
@@ -37,8 +41,7 @@ public class RestaurantDBWorker implements Runnable {
 			// first prompt for a query
 			out.println("Hello. Please enter your query:");
 
-			// now continue reading from the socket until the client says
-			// "Bye."
+			// continue reading from the socket until the client says "Bye."
 			while (true) {
 				inputLine = in.readLine();
 
@@ -53,7 +56,7 @@ public class RestaurantDBWorker implements Runnable {
 					if ("[]".equals(outputLine)) {
 						outputLine = "No Results Found. Sorry :(";
 					}
-					// then print the answer to the socket
+					// then print the answer to the socket, self-flushing
 					out.println(outputLine);
 				}
 			}
@@ -65,8 +68,10 @@ public class RestaurantDBWorker implements Runnable {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Can't listen on the port or can't listen for a connection.");
+			System.err.println("Can't listen on the port or can't listen for a connection.");
 		}
+
+		System.out.println("Client disconnected.");
 	}
 
 }
