@@ -16,6 +16,10 @@ public class RestaurantDBServer implements Runnable {
 
 	// class fields
 	private final RestaurantDB database;
+	private ServerSocket serverSocket;
+	private boolean serverOn = true;
+	private Thread runningThread;
+	private int port;
 
 	/**
 	 * The constructor for RestaurantDBServer.
@@ -31,69 +35,69 @@ public class RestaurantDBServer implements Runnable {
 	 *            the name of a file with user details in JSON format
 	 */
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
+		this.port = port;
+
 		System.out.println("Making Database.");
 		this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
 		System.out.println("Finished Making Database.");
+	}
 
-		try (
-				// listen to the specified port and bind to it
-				ServerSocket serverSocket = new ServerSocket(port);
-				// if the server successfully binds to the port, then accept a
-				// connection from a client
-				Socket clientSocket = serverSocket.accept();
+	public void run() {
+		synchronized (this) {
+			this.runningThread = Thread.currentThread();
+		}
 
-				// get streams to communicate to and from the client from the
-				// socket
-				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		openServerSocket();
+		while (serverOn) {
+			Socket clientSocket = null;
+			try {
+				// listen for a client connection and accept the connection
+				clientSocket = this.serverSocket.accept();
+			} catch (IOException e) {
 
-		) {
-			// if initializing is successful then:
-			String inputLine;
-			String outputLine;
-
-			// first prompt for a query
-			out.println("Hello. Please enter your query:");
-
-			// now continue reading from the socket until the client says
-			// "Bye."
-			while (true) {
-				inputLine = in.readLine();
-
-				if (inputLine != null) {
-					if (inputLine.equals("Bye.")) {
-						break;
-					}
-
-					// when the client enters a query, process it
-					outputLine = database.query(inputLine).toString();
-					if ("[]".equals(outputLine)) {
-						outputLine = "No Results Found. Sorry :(";
-					}
-					// then print the answer to the socket
-					out.println(outputLine);
+				// if can't make the connection then print error messages
+				if (!serverOn) {
+					System.out.println("Server Offline.");
+				} else {
+					e.printStackTrace();
+					throw new IllegalArgumentException("Error making socket.");
 				}
 			}
+			// once a client connection has been made
+			// make a new thread to process their queries
+			new Thread(new RestaurantDBWorker(clientSocket, this.database)).start();
+		}
 
-			// when there is nothing more to say close everything
-			out.close();
-			in.close();
-			clientSocket.close();
-			serverSocket.close();
+		closeServerSocket();
+		System.out.println("Server Offline.");
+	}
 
+	/**
+	 * Helper method to attempt to open and bind to the server socket.
+	 */
+	private void openServerSocket() {
+		try {
+			this.serverSocket = new ServerSocket(this.port);
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Can't listen on the port or can't listen for a connection.");
+			throw new IllegalArgumentException("Cannot open port" + port + ".");
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO
+	/**
+	 * Helper method to attempt to closer the server socket.
+	 */
+	private synchronized void closeServerSocket() {
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Error closing Server.");
+		}
 	}
 
 	public static void main(String[] args) {
 		RestaurantDBServer server = new RestaurantDBServer(Integer.parseInt(args[0]), args[1], args[2], args[3]);
+		new Thread(server).start();
 	}
 
 	/**
