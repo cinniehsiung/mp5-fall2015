@@ -12,7 +12,7 @@ import java.util.Set;
 // TODO: Implement a server that will instantiate a database, 
 // process queries concurrently, etc.
 
-public class RestaurantDBServer {
+public class RestaurantDBServer implements Runnable {
 
 	// class fields
 	private final RestaurantDB database;
@@ -33,7 +33,7 @@ public class RestaurantDBServer {
 	public RestaurantDBServer(int port, String restaurantDetails, String userReviews, String userDetails) {
 		System.out.println("Making Database.");
 		this.database = new RestaurantDB(restaurantDetails, userReviews, userDetails);
-		System.out.print("Finished Making Database.");
+		System.out.println("Finished Making Database.");
 
 		try (
 				// listen to the specified port and bind to it
@@ -85,6 +85,11 @@ public class RestaurantDBServer {
 			e.printStackTrace();
 			System.out.println("Can't listen on the port or can't listen for a connection.");
 		}
+	}
+
+	@Override
+	public void run() {
+		// TODO
 	}
 
 	public static void main(String[] args) {
