@@ -60,7 +60,7 @@ public class Review {
 		this.userID = (String) this.reviewJSON.get(USERID_KEY);
 		this.date = (String) this.reviewJSON.get(DATE_KEY);
 	}
-	
+
 	/**
 	 * A method to return the type of the review;
 	 * 
@@ -133,5 +133,30 @@ public class Review {
 	 */
 	public String getDate() {
 		return date;
+	}
+
+	@Override
+	/**
+	 * Compares this review to that review. Returns true if the business IDs are
+	 * the same.
+	 * 
+	 * @return true if the reviews are equal, false otherwise
+	 */
+	public boolean equals(Object obj) {
+		Review that = (Review) obj;
+		return this.reviewID.equals(that.getReviewID());
+	}
+
+	@Override
+	/**
+	 * Returns a hash code value for the object. This method is supported for
+	 * the benefit of hash tables such as those provided by java.util.HashMap.
+	 * 
+	 * If two objects are equal than they will have the same hashcode.
+	 * 
+	 * @return the hashcode
+	 */
+	public int hashCode() {
+		return this.reviewID.hashCode();
 	}
 }

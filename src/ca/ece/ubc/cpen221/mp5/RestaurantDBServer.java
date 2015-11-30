@@ -1,9 +1,6 @@
 package ca.ece.ubc.cpen221.mp5;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collections;
@@ -25,7 +22,7 @@ public class RestaurantDBServer implements Runnable {
 	 * The constructor for RestaurantDBServer.
 	 * 
 	 * @param port
-	 *            a port number
+	 *            a port number, 0 <= port M = 65535
 	 * @param restaurantDetails
 	 *            the name of a file that contains the restaurant details in
 	 *            JSON format
@@ -51,7 +48,7 @@ public class RestaurantDBServer implements Runnable {
 		while (serverOn) {
 			Socket clientSocket = null;
 			try {
-				// listen for a client connection and accept the connection
+				// listen until a client connection is made
 				clientSocket = this.serverSocket.accept();
 			} catch (IOException e) {
 

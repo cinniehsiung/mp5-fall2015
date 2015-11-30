@@ -12,7 +12,7 @@ public class RestaurantDBWorker implements Runnable {
 	private RestaurantDB database;
 
 	/**
-	 * Helper class to actually help the clients.
+	 * Helper class to actually help the clients. Handles one client at a time.
 	 * 
 	 * @param clientSocket
 	 * @param database
@@ -43,6 +43,7 @@ public class RestaurantDBWorker implements Runnable {
 				inputLine = in.readLine();
 
 				if (inputLine != null) {
+					// exit key
 					if (inputLine.equals("Bye.")) {
 						break;
 					}

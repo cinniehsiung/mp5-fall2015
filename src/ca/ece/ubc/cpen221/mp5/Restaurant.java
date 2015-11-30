@@ -256,7 +256,31 @@ public class Restaurant {
 	 * @return the String representation of a restaurant.
 	 */
 	public String toString() {
-		return name;
+		return (name + businessID);
 	}
 
+	@Override
+	/**
+	 * Compares this restaurant to that restaurant. Returns true if the business
+	 * IDs are the same.
+	 * 
+	 * @return true if the restaurants are equal
+	 */
+	public boolean equals(Object obj) {
+		Restaurant that = (Restaurant) obj;
+		return this.businessID.equals(that.getBusinessID());
+	}
+
+	@Override
+	/**
+	 * Returns a hash code value for the object. This method is supported for
+	 * the benefit of hash tables such as those provided by java.util.HashMap.
+	 * 
+	 * If two objects are equal than they will have the same hashcode.
+	 * 
+	 * @return the hashcode
+	 */
+	public int hashCode() {
+		return this.businessID.hashCode();
+	}
 }
