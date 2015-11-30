@@ -19,18 +19,6 @@ public class QueryGrammarBaseListener implements QueryGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterQuery(@NotNull QueryGrammarParser.QueryContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitQuery(@NotNull QueryGrammarParser.QueryContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) { }
 	/**
 	 * {@inheritDoc}

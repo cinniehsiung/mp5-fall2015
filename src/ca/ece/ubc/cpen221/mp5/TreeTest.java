@@ -33,7 +33,7 @@ public class TreeTest {
         parser.reportErrorsAsExceptions();
         
         // Generate the parse tree using the starter rule.
-        ParseTree tree = parser.query(); // starter rule is an orExpression
+        ParseTree tree = parser.orExpr(); // starter rule is an orExpression
         
         // debugging option #1: print the tree to the console
         System.err.println(tree.toStringTree(parser));
@@ -70,18 +70,11 @@ public class TreeTest {
             Set<Restaurant> clone = Collections.synchronizedSet(Collections.unmodifiableSet(restaurantSet));
             
             return clone;
-        }
-        
-        @Override 
-        public void exitQuery(@NotNull QueryGrammarParser.QueryContext ctx) {
-            
-           
-        }
-                
+        }  
         
         @Override 
         public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
-            if (ctx.OR() != null) {
+            if (ctx.OR() != null && ctx.getChildCount() > 1) {
                 Set<Restaurant> result1 = stack.pop();
                 Set<Restaurant> result2 = stack.pop();
                 
@@ -98,7 +91,7 @@ public class TreeTest {
         @Override
         public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
                       
-            if (ctx.AND() != null) {
+            if (ctx.AND() != null && ctx.getChildCount() > 1) {
                 Set<Restaurant> result1 = stack.pop();
                 Set<Restaurant> result2 = stack.pop();
                 
