@@ -72,8 +72,8 @@ public class TreeTest {
 		@Override
 		public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
 			if (ctx.OR() != null && ctx.getChildCount() > 1) {
-			    int count = 1;
-				while (count < ctx.getChildCount()-1 && stack.size() > 1) {
+			    int count = 0;
+				while (count < (ctx.getChildCount()-1)/2 && stack.size() > 1) {
 					Set<Restaurant> result1 = stack.pop();
 					Set<Restaurant> result2 = stack.pop();
 
@@ -93,8 +93,8 @@ public class TreeTest {
 		public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
 
 			if (ctx.AND() != null && ctx.getChildCount() > 1) {
-			    int count = 1;
-				while (count < ctx.getChildCount()-1 && stack.size() > 1) {
+			    int count = 0;
+				while (count < (ctx.getChildCount()-1)/2 && stack.size() > 1) {
 					Set<Restaurant> result1 = stack.pop();
 					Set<Restaurant> result2 = stack.pop();
 
