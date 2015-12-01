@@ -30,7 +30,7 @@ public class TreeTestTest {
 	public void andTest1() {
 		TreeTest parser = new TreeTest();
 
-		String query = "(category(Mexican) && price(1..2)) || (category(Hot Dogs) && in(UC Campus Area) && price(1..3))";
+		String query = "category(Bars) || (price(1..3) && rating(4..5))";
 
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 

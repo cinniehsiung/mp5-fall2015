@@ -286,9 +286,6 @@ public class RestaurantDB {
 
 				Set<String> neighbourhoods = currentRestaurant.getNeighbourhoods();
 
-				for (String current : neighbourhoods) {
-					System.out.println(current);
-				}
 
 				if (neighbourhoods.contains(search)) {
 					results.add(currentRestaurant.clone());
@@ -317,9 +314,7 @@ public class RestaurantDB {
 				double rating = currentRestaurant.getStars();
 
 				if (rating >= lowerbound && rating <= upperbound) {
-					System.out.println("Lowerbound: " + lowerbound);
-					System.out.println("Rating: " + rating);
-					System.out.println("Upperbound: " + upperbound);
+					
 					results.add(currentRestaurant.clone());
 				}
 			}
@@ -336,8 +331,6 @@ public class RestaurantDB {
 				int price = (int) currentRestaurant.getPrice();
 
 				if (price >= lowerbound && price <= upperbound) {
-					System.out.println(currentRestaurant.getPrice());
-					System.out.println(search);
 					results.add(currentRestaurant.clone());
 				}
 			}

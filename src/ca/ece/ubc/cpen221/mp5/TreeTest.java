@@ -113,45 +113,34 @@ public class TreeTest {
 		@Override
 		public void exitAtom(@NotNull QueryGrammarParser.AtomContext ctx) {
 			String text = ctx.start.getText();
-			System.out.println(text); // debug purposes
 
 			if (ctx.start.getType() == QueryGrammarParser.IN) {
 				String search = text.substring(IN_START_INDEX, text.length() - 1);
-				System.out.println(search); // debug purposes
 				String request = text.substring(0, IN_START_INDEX - 1);
-				System.out.println(request); // debug purposes
 
 				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
 				stack.push(atomResults);
 			} else if (ctx.start.getType() == QueryGrammarParser.CATEGORY) {
 				String search = text.substring(CATEGORY_START_INDEX, text.length() - 1);
-				System.out.println(search); // debug purposes
 				String request = text.substring(0, CATEGORY_START_INDEX - 1);
-				System.out.println(request); // debug purposes
 
 				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
 				stack.push(atomResults);
 			} else if (ctx.start.getType() == QueryGrammarParser.RATING) {
 				String search = text.substring(RATING_START_INDEX, text.length() - 1);
-				System.out.println(search); // debug purposes
 				String request = text.substring(0, RATING_START_INDEX - 1);
-				System.out.println(request); // debug purposes
 
 				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
 				stack.push(atomResults);
 			} else if (ctx.start.getType() == QueryGrammarParser.PRICE) {
 				String search = text.substring(PRICE_START_INDEX, text.length() - 1);
-				System.out.println(search); // debug purposes
 				String request = text.substring(0, PRICE_START_INDEX - 1);
-				System.out.println(request); // debug purposes
 
 				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
 				stack.push(atomResults);
 			} else if (ctx.start.getType() == QueryGrammarParser.NAME) {
 				String search = text.substring(NAME_START_INDEX, text.length() - 1);
-				System.out.println(search); // debug purposes
 				String request = text.substring(0, NAME_START_INDEX - 1);
-				System.out.println(request); // debug purposes
 
 				Set<Restaurant> atomResults = Collections.synchronizedSet(database.respondRequest(request, search));
 				stack.push(atomResults);
