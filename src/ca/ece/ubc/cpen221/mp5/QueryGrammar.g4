@@ -48,6 +48,6 @@ WHITESPACE : [ \t\r\n]+ -> skip ;
 
 
 orExpr : andExpr (OR andExpr)*;
-andExpr : atom (AND atom)* ;
+andExpr : atom (AND atom)*;
 atom : IN | CATEGORY | RATING | PRICE | NAME | (LPAREN orExpr RPAREN);
  

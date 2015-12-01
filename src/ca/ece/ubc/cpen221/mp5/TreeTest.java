@@ -40,8 +40,8 @@ public class TreeTest {
 		((RuleContext) tree).inspect(parser);
 
 		// debugging option #3: walk the tree with a listener
-		// new ParseTreeWalker().walk(new FormulaListener_PrintEverything(),
-		// tree);
+		 new ParseTreeWalker().walk(new QueryGrammarListener_PrintEverything(),
+		 tree);
 
 		ParseTreeWalker walker = new ParseTreeWalker();
 		QueryListener_QueryCreator listener = new QueryListener_QueryCreator();
@@ -72,13 +72,15 @@ public class TreeTest {
 		@Override
 		public void exitOrExpr(@NotNull QueryGrammarParser.OrExprContext ctx) {
 			if (ctx.OR() != null && ctx.getChildCount() > 1) {
-				while (stack.size() > 1) {
+			    int count = 1;
+				while (count < ctx.getChildCount()-1 && stack.size() > 1) {
 					Set<Restaurant> result1 = stack.pop();
 					Set<Restaurant> result2 = stack.pop();
 
 					result1.addAll(result2);
 
 					stack.push(result1);
+					count++;
 				}
 			} else {
 				// do nothing, because we just matched a literal and its
@@ -91,13 +93,15 @@ public class TreeTest {
 		public void exitAndExpr(@NotNull QueryGrammarParser.AndExprContext ctx) {
 
 			if (ctx.AND() != null && ctx.getChildCount() > 1) {
-				while (stack.size() > 1) {
+			    int count = 1;
+				while (count < ctx.getChildCount()-1 && stack.size() > 1) {
 					Set<Restaurant> result1 = stack.pop();
 					Set<Restaurant> result2 = stack.pop();
 
 					result1.retainAll(result2);
 
 					stack.push(result1);
+					count++;
 				}
 			} else {
 				// do nothing, because we just matched a literal and its
@@ -154,24 +158,37 @@ public class TreeTest {
 			}
 		}
 	}
-	/*
-	 * 
-	 * private static class FormulaListener_PrintEverything extends
-	 * FormulaBaseListener { public void
-	 * enterFormula(FormulaParser.FormulaContext ctx) { System.err.println(
-	 * "entering formula " + ctx.getText()); } public void
-	 * exitFormula(FormulaParser.FormulaContext ctx) { System.err.println(
-	 * "exiting formula " + ctx.getText()); }
-	 * 
-	 * public void enterConjunction(FormulaParser.ConjunctionContext ctx) {
-	 * System.err.println("entering conjunction " + ctx.getText()); } public
-	 * void exitConjunction(FormulaParser.ConjunctionContext ctx) {
-	 * System.err.println("exiting conjunction " + ctx.getText()); }
-	 * 
-	 * public void enterLiteral(FormulaParser.LiteralContext ctx) {
-	 * System.err.println("entering literal " + ctx.getText()); } public void
-	 * exitLiteral(FormulaParser.LiteralContext ctx) { System.err.println(
-	 * "exiting literal " + ctx.getText()); } }
-	 */
+	
+	 
+	  private static class QueryGrammarListener_PrintEverything extends QueryGrammarBaseListener { 
+	  
+	  @Override
+	  public void enterOrExpr(QueryGrammarParser.OrExprContext ctx) {
+	      System.err.println("entering or expression " + ctx.getText()); 
+	      } 
+	  
+	  @Override
+	  public void exitOrExpr(QueryGrammarParser.OrExprContext ctx) { 
+	      System.err.println("exiting or expression " + ctx.getText()); }
+	  
+	  @Override
+	  public void enterAndExpr(QueryGrammarParser.AndExprContext ctx) {
+	      System.err.println("entering and expression " + ctx.getText());
+	  }
+	  
+	  @Override
+	  public void exitAndExpr(QueryGrammarParser.AndExprContext ctx) {
+	  System.err.println("exiting and expression " + ctx.getText()); }
+	  
+	  @Override
+	  public void enterAtom(QueryGrammarParser.AtomContext ctx) {
+	  System.err.println("entering atom " + ctx.getText()); } 
+	  
+	  public void
+	  exitAtom(QueryGrammarParser.AtomContext ctx) { System.err.println(
+	  "exiting atom " + ctx.getText()); } 
+	  
+	  }
+	 
 
 }
