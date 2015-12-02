@@ -27,6 +27,9 @@ public class RestaurantDB {
 	private List<Review> reviewDB = Collections.synchronizedList(new ArrayList<Review>());
 	private List<User> userDB = Collections.synchronizedList(new ArrayList<User>());
 
+	// clarifying constants
+	String ADDED = "added?";
+
 	/**
 	 * Create a database from the Yelp dataset given the names of three files:
 	 * <ul>
@@ -162,8 +165,10 @@ public class RestaurantDB {
 	 * @param restaurantDetails
 	 *            the restaurant details in JSON format
 	 */
-	public void addRestaurant(String restaurantDetails) {
+	public String addRestaurant(String restaurantDetails) {
 		boolean existingRestaurant = false;
+		JSONObject JSONStringObj = new JSONObject();
+		JSONStringObj.put(ADDED, false);
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -179,12 +184,15 @@ public class RestaurantDB {
 
 			if (!existingRestaurant) {
 				this.restaurantDB.add(newRestaurant);
+				JSONStringObj.put(ADDED, true);
 			}
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}
+
+		return JSONStringObj.toJSONString();
 	}
 
 	/**
@@ -194,8 +202,10 @@ public class RestaurantDB {
 	 * @param userDetails
 	 *            the user details in JSON format
 	 */
-	public void addUser(String userDetails) {
+	public String addUser(String userDetails) {
 		boolean existingUser = false;
+		JSONObject JSONStringObj = new JSONObject();
+		JSONStringObj.put(ADDED, false);
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -211,12 +221,15 @@ public class RestaurantDB {
 
 			if (!existingUser) {
 				this.userDB.add(newUser);
+				JSONStringObj.put(ADDED, true);
 			}
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}
+
+		return JSONStringObj.toJSONString();
 	}
 
 	/**
@@ -226,12 +239,14 @@ public class RestaurantDB {
 	 * @param userReview
 	 *            the review details in JSON format
 	 */
-	public void addReview(String userReview) {
+	public String addReview(String reviewDetails) {
 		boolean existingReview = false;
+		JSONObject JSONStringObj = new JSONObject();
+		JSONStringObj.put(ADDED, false);
 
 		try {
 			JSONParser parser = new JSONParser();
-			Review newReview = new Review((JSONObject) parser.parse((userReview)));
+			Review newReview = new Review((JSONObject) parser.parse((reviewDetails)));
 
 			Iterator<Review> reviewItr = this.reviewDB.iterator();
 			while (reviewItr.hasNext()) {
@@ -243,12 +258,15 @@ public class RestaurantDB {
 
 			if (!existingReview) {
 				this.reviewDB.add(newReview);
+				JSONStringObj.put(ADDED, true);
 			}
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}
+
+		return JSONStringObj.toJSONString();
 	}
 
 	/**
@@ -286,7 +304,6 @@ public class RestaurantDB {
 
 				Set<String> neighbourhoods = currentRestaurant.getNeighbourhoods();
 
-
 				if (neighbourhoods.contains(search)) {
 					results.add(currentRestaurant.clone());
 				}
@@ -314,7 +331,7 @@ public class RestaurantDB {
 				double rating = currentRestaurant.getStars();
 
 				if (rating >= lowerbound && rating <= upperbound) {
-					
+
 					results.add(currentRestaurant.clone());
 				}
 			}
