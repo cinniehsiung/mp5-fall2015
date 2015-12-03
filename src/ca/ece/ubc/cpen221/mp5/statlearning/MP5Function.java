@@ -1,7 +1,7 @@
 package ca.ece.ubc.cpen221.mp5.statlearning;
 
 import ca.ece.ubc.cpen221.mp5.Restaurant;
-import ca.ece.ubc.cpen221.mp5.RestaurantDB;
+import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
 
 public interface MP5Function {
 

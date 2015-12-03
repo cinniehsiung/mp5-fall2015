@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 // TODO: Implement a server that will instantiate a database, 
 // process queries concurrently, etc.
+
+import ca.ece.ubc.cpen221.mp5.Restaurant;
 
 public class RestaurantDBServer {
 

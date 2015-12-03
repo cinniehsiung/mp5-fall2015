@@ -1,6 +1,6 @@
 // Generated from QueryGrammar.g4 by ANTLR 4.4
 
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.queryParsing;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;

@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.server;
 
 import static org.junit.Assert.*;
 

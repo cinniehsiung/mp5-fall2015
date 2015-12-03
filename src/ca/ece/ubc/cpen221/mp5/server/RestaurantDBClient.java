@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,10 +1,13 @@
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.queryParsing;
 
 import static org.junit.Assert.*;
 
 import java.util.Set;
 
 import org.junit.Test;
+
+import ca.ece.ubc.cpen221.mp5.Restaurant;
+import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
 
 public class QueryParserTest {
 

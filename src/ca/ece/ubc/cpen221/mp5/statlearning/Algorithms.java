@@ -3,6 +3,7 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 import java.util.Set;
 import java.util.List;
 import ca.ece.ubc.cpen221.mp5.*;
+import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
 
 public class Algorithms {
 
