@@ -215,25 +215,25 @@ public class RestaurantDB {
 			// iterate through the restaurant database
 			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 			while (restaurantItr.hasNext()) {
-				//if the restaurant we want to add exists
+				// if the restaurant we want to add exists
 				if (restaurantItr.next().equals(newRestaurant)) {
-					//we take note of that fact
+					// we take note of that fact
 					existingRestaurant = true;
 					break;
 				}
 			}
 
-			//so if it doesn't already exist
+			// so if it doesn't already exist
 			if (!existingRestaurant) {
-				//then add it to the database
+				// then add it to the database
 				this.restaurantDB.add(newRestaurant);
 				JSONStringObj.clear();
 				JSONStringObj.put(KEY_RESTAURANT, ADDED);
 			}
 
-			//if we can't make a restaurant with the given restaurant details
+			// if we can't make a restaurant with the given restaurant details
 		} catch (ParseException e) {
-			//return a suitable json formattted string with the error message
+			// return a suitable json formattted string with the error message
 			JSONStringObj.clear();
 			JSONStringObj.put(KEY_RESTAURANT, FORMATERROR);
 		}
@@ -327,12 +327,8 @@ public class RestaurantDB {
 	 * @return a set of restaurants that answer the queries
 	 */
 	public Set<Restaurant> query(String queryString) {
-		// TODO: Implement this method
-		// Write specs, etc.
-
-		QueryParser test = new QueryParser();
-		return test.parseQuery(queryString, this);
-				
+		QueryParser queryParser = new QueryParser();
+		return queryParser.parseQuery(queryString, this);
 	}
 
 	/**

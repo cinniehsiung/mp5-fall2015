@@ -281,8 +281,8 @@ public class Restaurant {
 	 * @return the String representation of a restaurant.
 	 */
 	public String toString() {
-		// return this.getJSONDetails();
-		return this.name;
+		return this.getJSONDetails();
+		//return this.name;
 	}
 
 	@Override
