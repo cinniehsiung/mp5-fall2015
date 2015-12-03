@@ -65,8 +65,8 @@ public class Review {
 		return new Review(this.reviewJSON);
 	}
 
-	public JSONObject getReviewJSON() {
-		return (JSONObject) this.reviewJSON.clone();
+	public String getJSONDetails() {
+		return this.reviewJSON.toJSONString();
 	}
 
 	/**

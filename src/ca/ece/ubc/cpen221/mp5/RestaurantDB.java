@@ -38,6 +38,7 @@ public class RestaurantDB {
 	public static String ADDED = "added sucessfully.";
 	public static String NOTADDED = "not added because it already exists.";
 	public static String NOTFOUND = "not found.";
+	public static String FORMATERROR = "not added because it was formatted incorrectly.";
 
 	/**
 	 * Create a database from the Yelp dataset given the names of three files:
@@ -60,6 +61,8 @@ public class RestaurantDB {
 		try {
 			JSONParser parser = new JSONParser();
 
+			// read from the json files to create the list of restaurants for
+			// the database
 			BufferedReader restaurantReader = new BufferedReader(new FileReader(restaurantJSONfilename));
 			String currentRestaurantLine;
 			while ((currentRestaurantLine = restaurantReader.readLine()) != null) {
@@ -68,6 +71,8 @@ public class RestaurantDB {
 				this.restaurantDB.add(new Restaurant(currentJSONRestaurant));
 			}
 
+			// read from the json files to create the list of reviews for the
+			// database
 			BufferedReader reviewReader = new BufferedReader(new FileReader(reviewsJSONfilename));
 			String currentReviewLine;
 			while ((currentReviewLine = reviewReader.readLine()) != null) {
@@ -76,6 +81,8 @@ public class RestaurantDB {
 				this.reviewDB.add(new Review(currentJSONReview));
 			}
 
+			// read from the json files to create the list of users for the
+			// database
 			BufferedReader userReader = new BufferedReader(new FileReader(usersJSONfilename));
 			String currentUserLine;
 			while ((currentUserLine = userReader.readLine()) != null) {
@@ -84,6 +91,7 @@ public class RestaurantDB {
 				this.userDB.add(new User(currentJSONUser));
 			}
 
+			// throw exceptions if anything goes wrong
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
@@ -108,19 +116,25 @@ public class RestaurantDB {
 	 *         invalid, returns "No Review Found. Sorry :(".
 	 */
 	public String randomReview(String restaurantName) {
+		// create a suitable json string if a review could not be found
 		JSONObject JSONStringObj = new JSONObject();
 		JSONStringObj.put(KEY_REVIEW, NOTFOUND);
 		String randomReview = JSONStringObj.toJSONString();
 
+		// iterate through the restaurant database
 		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
 
+			// if the restaurant has the same name as the query restaurant
 			Restaurant currentRestaurant = restaurantItr.next();
 			if (currentRestaurant.getName().equals(restaurantName)) {
 
+				// get the business ID of the restaurant
 				String businessID = currentRestaurant.getBusinessID();
 				List<Review> allReviews = new ArrayList<Review>();
 
+				// so we can iterate through the reviews and get all the reviews
+				// with the same business ID
 				Iterator<Review> reviewItr = this.reviewDB.iterator();
 				while (reviewItr.hasNext()) {
 					Review currentJSONReview = reviewItr.next();
@@ -129,10 +143,13 @@ public class RestaurantDB {
 					}
 				}
 
+				// if any reviews were found
 				if (allReviews.size() > 0) {
+					// then get a random one
 					Random rand = new Random();
 					int randomIndex = rand.nextInt(allReviews.size());
-					randomReview = allReviews.get(randomIndex).getReviewJSON().toJSONString();
+					// replace the json not-found string with the json review
+					randomReview = allReviews.get(randomIndex).getJSONDetails();
 
 					break;
 				}
@@ -154,14 +171,18 @@ public class RestaurantDB {
 	 *         returns "Sorry. The restaurant was not found.".
 	 */
 	public String getRestaurant(String businessID) {
+		// create a suitable json string if the restaurant could not be found
 		JSONObject JSONStringObj = new JSONObject();
 		JSONStringObj.put(KEY_RESTAURANT, NOTFOUND);
 		String restaurantDetails = JSONStringObj.toJSONString();
 
+		// iterate through the restaurant database
 		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
+			// as soon as we find a restaurant with the desired business ID
 			Restaurant currentRestaurant = restaurantItr.next();
 			if (currentRestaurant.getBusinessID().equals(businessID)) {
+				// then get the restaurant details and return it
 				restaurantDetails = currentRestaurant.getJSONDetails();
 				break;
 			}
@@ -181,30 +202,40 @@ public class RestaurantDB {
 	 */
 	public String addRestaurant(String restaurantDetails) {
 		boolean existingRestaurant = false;
+
+		// create a suitable json string if the restaurant was not added
 		JSONObject JSONStringObj = new JSONObject();
 		JSONStringObj.put(KEY_RESTAURANT, NOTADDED);
 
 		try {
+			// create a restaurant from the given json details
 			JSONParser parser = new JSONParser();
 			Restaurant newRestaurant = new Restaurant((JSONObject) parser.parse((restaurantDetails)));
 
+			// iterate through the restaurant database
 			Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 			while (restaurantItr.hasNext()) {
+				//if the restaurant we want to add exists
 				if (restaurantItr.next().equals(newRestaurant)) {
+					//we take note of that fact
 					existingRestaurant = true;
 					break;
 				}
 			}
 
+			//so if it doesn't already exist
 			if (!existingRestaurant) {
+				//then add it to the database
 				this.restaurantDB.add(newRestaurant);
 				JSONStringObj.clear();
 				JSONStringObj.put(KEY_RESTAURANT, ADDED);
 			}
 
+			//if we can't make a restaurant with the given restaurant details
 		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
+			//return a suitable json formattted string with the error message
+			JSONStringObj.clear();
+			JSONStringObj.put(KEY_RESTAURANT, FORMATERROR);
 		}
 
 		return JSONStringObj.toJSONString();
@@ -241,8 +272,9 @@ public class RestaurantDB {
 			}
 
 		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
+			// e.printStackTrace();
+			JSONStringObj.clear();
+			JSONStringObj.put(KEY_USER, FORMATERROR);
 		}
 
 		return JSONStringObj.toJSONString();
@@ -279,8 +311,8 @@ public class RestaurantDB {
 			}
 
 		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException();
+			JSONStringObj.clear();
+			JSONStringObj.put(KEY_REVIEW, FORMATERROR);
 		}
 
 		return JSONStringObj.toJSONString();
