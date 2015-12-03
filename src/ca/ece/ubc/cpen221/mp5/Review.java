@@ -61,6 +61,14 @@ public class Review {
 		this.date = (String) this.reviewJSON.get(DATE_KEY);
 	}
 
+	public Review clone() {
+		return new Review(this.reviewJSON);
+	}
+
+	public JSONObject getReviewJSON() {
+		return (JSONObject) this.reviewJSON.clone();
+	}
+
 	/**
 	 * A method to return the type of the review;
 	 * 

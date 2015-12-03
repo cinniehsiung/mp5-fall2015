@@ -12,6 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,12 +27,17 @@ import org.json.simple.parser.ParseException;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
-	private List<Restaurant> restaurantDB = Collections.synchronizedList(new ArrayList<Restaurant>());
-	private List<Review> reviewDB = Collections.synchronizedList(new ArrayList<Review>());
-	private List<User> userDB = Collections.synchronizedList(new ArrayList<User>());
+	private List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
+	private List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
+	private List<User> userDB = new CopyOnWriteArrayList<User>();
 
 	// clarifying constants
-	String ADDED = "added?";
+	public static String KEY_RESTAURANT = "This restaurant was";
+	public static String KEY_REVIEW = "This review was";
+	public static String KEY_USER = "This user was";
+	public static String ADDED = "added sucessfully.";
+	public static String NOTADDED = "not added because it already exists.";
+	public static String NOTFOUND = "not found.";
 
 	/**
 	 * Create a database from the Yelp dataset given the names of three files:
@@ -99,7 +108,9 @@ public class RestaurantDB {
 	 *         invalid, returns "No Review Found. Sorry :(".
 	 */
 	public String randomReview(String restaurantName) {
-		String randomReview = "No Review Found. Sorry :(";
+		JSONObject JSONStringObj = new JSONObject();
+		JSONStringObj.put(KEY_REVIEW, NOTFOUND);
+		String randomReview = JSONStringObj.toJSONString();
 
 		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
@@ -108,22 +119,23 @@ public class RestaurantDB {
 			if (currentRestaurant.getName().equals(restaurantName)) {
 
 				String businessID = currentRestaurant.getBusinessID();
-				List<String> allReviews = new ArrayList<String>();
+				List<Review> allReviews = new ArrayList<Review>();
 
 				Iterator<Review> reviewItr = this.reviewDB.iterator();
 				while (reviewItr.hasNext()) {
 					Review currentJSONReview = reviewItr.next();
 					if (currentJSONReview.getBusinessID().equals(businessID)) {
-						String currentReview = (String) currentJSONReview.getText();
-						allReviews.add(currentReview);
+						allReviews.add(currentJSONReview.clone());
 					}
 				}
 
-				Random rand = new Random();
-				int randomIndex = rand.nextInt(allReviews.size());
-				randomReview = allReviews.get(randomIndex);
+				if (allReviews.size() > 0) {
+					Random rand = new Random();
+					int randomIndex = rand.nextInt(allReviews.size());
+					randomReview = allReviews.get(randomIndex).getReviewJSON().toJSONString();
 
-				break;
+					break;
+				}
 			}
 
 		}
@@ -142,7 +154,9 @@ public class RestaurantDB {
 	 *         returns "Sorry. The restaurant was not found.".
 	 */
 	public String getRestaurant(String businessID) {
-		String restaurantDetails = "Sorry. The restaurant was not found.";
+		JSONObject JSONStringObj = new JSONObject();
+		JSONStringObj.put(KEY_RESTAURANT, NOTFOUND);
+		String restaurantDetails = JSONStringObj.toJSONString();
 
 		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
@@ -168,7 +182,7 @@ public class RestaurantDB {
 	public String addRestaurant(String restaurantDetails) {
 		boolean existingRestaurant = false;
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(ADDED, false);
+		JSONStringObj.put(KEY_RESTAURANT, NOTADDED);
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -184,7 +198,8 @@ public class RestaurantDB {
 
 			if (!existingRestaurant) {
 				this.restaurantDB.add(newRestaurant);
-				JSONStringObj.put(ADDED, true);
+				JSONStringObj.clear();
+				JSONStringObj.put(KEY_RESTAURANT, ADDED);
 			}
 
 		} catch (ParseException e) {
@@ -205,7 +220,7 @@ public class RestaurantDB {
 	public String addUser(String userDetails) {
 		boolean existingUser = false;
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(ADDED, false);
+		JSONStringObj.put(KEY_USER, NOTADDED);
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -221,7 +236,8 @@ public class RestaurantDB {
 
 			if (!existingUser) {
 				this.userDB.add(newUser);
-				JSONStringObj.put(ADDED, true);
+				JSONStringObj.clear();
+				JSONStringObj.put(KEY_USER, ADDED);
 			}
 
 		} catch (ParseException e) {
@@ -242,7 +258,7 @@ public class RestaurantDB {
 	public String addReview(String reviewDetails) {
 		boolean existingReview = false;
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(ADDED, false);
+		JSONStringObj.put(KEY_REVIEW, NOTADDED);
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -258,7 +274,8 @@ public class RestaurantDB {
 
 			if (!existingReview) {
 				this.reviewDB.add(newReview);
-				JSONStringObj.put(ADDED, true);
+				JSONStringObj.clear();
+				JSONStringObj.put(KEY_REVIEW, ADDED);
 			}
 
 		} catch (ParseException e) {

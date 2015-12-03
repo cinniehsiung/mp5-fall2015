@@ -51,10 +51,17 @@ public class RestaurantDBWorker implements Runnable {
 						break;
 					}
 
-					// when the client enters a query, process it
-					outputLine = database.query(inputLine).toString();
-					if ("[]".equals(outputLine)) {
-						outputLine = "No Results Found. Sorry :(";
+					// when the client enters a special request process it
+					else if (isSpecialRequest(inputLine)) {
+						outputLine = processSpecialRequest(inputLine);
+					}
+
+					else {
+						// when the client enters a query, process it
+						outputLine = database.query(inputLine).toString();
+						if ("[]".equals(outputLine)) {
+							outputLine = "No Results Found. Sorry :(";
+						}
 					}
 					// then print the answer to the socket, self-flushing
 					out.println(outputLine);
@@ -72,6 +79,73 @@ public class RestaurantDBWorker implements Runnable {
 		}
 
 		System.out.println("Client disconnected.");
+	}
+
+	/**
+	 * Helper method to check whether the request is a query or otherwise. If it
+	 * is not a query but instead is one of "randomReview", "getRestaurant",
+	 * "addRestaurant", "addUser" or "addReview" then the method returns true.
+	 * 
+	 * @param request
+	 *            the request to check
+	 * @return true if the request is one of the special requests enumerated
+	 *         above, false otherwise.
+	 */
+	public static boolean isSpecialRequest(String request) {
+		boolean isSpecial = false;
+
+		int indexOfBracket = request.indexOf("(");
+
+		if (indexOfBracket != -1) {
+
+			String requestType = request.substring(0, indexOfBracket);
+			if ("randomReview".equals(requestType) || "getRestaurant".equals(requestType)
+					|| "addRestaurant".equals(requestType) || "addUser".equals(requestType)
+					|| "addReview".equals(requestType)) {
+				isSpecial = true;
+			}
+		}
+		return isSpecial;
+	}
+
+	final private static int START_INDEX_RANDOMREVIEW = 14;
+	final private static int START_INDEX_GETRESTAURANT = 15;
+	final private static int START_INDEX_ADDRESTAURANT = 15;
+	final private static int START_INDEX_ADDUSER = 9;
+	final private static int START_INDEX_ADDREVIEW = 11;
+
+	private String processSpecialRequest(String request) {
+		String requestAns = "";
+		String requestType = request.substring(0, request.indexOf("("));
+		int END_INDEX = request.length() - 2;
+
+		if ("randomReview".equals(requestType)) {
+			String restaurantName = request.substring(START_INDEX_RANDOMREVIEW, END_INDEX);
+			requestAns = database.randomReview(restaurantName);
+		}
+
+		else if ("getRestaurant".equals(requestType)) {
+			String businessID = request.substring(START_INDEX_GETRESTAURANT, END_INDEX);
+			requestAns = database.getRestaurant(businessID);
+		}
+
+		else if ("addRestaurant".equals(requestType)) {
+			String restaurantDetails = request.substring(START_INDEX_ADDRESTAURANT, END_INDEX);
+			requestAns = database.addRestaurant(restaurantDetails);
+		}
+
+		else if ("addUser".equals(requestType)) {
+			String userDetails = request.substring(START_INDEX_ADDUSER, END_INDEX);
+			requestAns = database.addUser(userDetails);
+
+		}
+
+		else if ("addReview".equals(requestType)) {
+			String reviewDetails = request.substring(START_INDEX_ADDREVIEW, END_INDEX);
+			requestAns = database.addReview(reviewDetails);
+		}
+
+		return requestAns;
 	}
 
 }

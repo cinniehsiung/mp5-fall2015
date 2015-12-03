@@ -284,4 +284,5 @@ public class Restaurant {
 	public int hashCode() {
 		return this.businessID.hashCode();
 	}
+	
 }
