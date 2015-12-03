@@ -39,6 +39,7 @@ public class RestaurantDBClient {
 				fromServer = in.readLine();
 				if (fromServer != null) {
 					System.out.println("Server: " + fromServer);
+					fromServer = null;
 				}
 
 				// if the user writes something
@@ -46,11 +47,14 @@ public class RestaurantDBClient {
 				if (fromUser != null) {
 					// print to the console for verification purposes
 					System.out.println("Client: " + fromUser);
+
+					// as well as print to the socket and thus to the server
+					out.println(fromUser);
+
+					// exit key
 					if (fromUser.equals("Bye.")) {
 						break;
 					}
-					// as well as print to the socket and thus to the server
-					out.println(fromUser);
 				}
 			}
 		} catch (IOException e) {
