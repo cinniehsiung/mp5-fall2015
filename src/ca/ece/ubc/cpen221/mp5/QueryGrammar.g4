@@ -37,7 +37,7 @@ PRICE : 'price' LPAREN RANGE RPAREN;
 NAME : 'name' LPAREN STRING RPAREN;
 LPAREN : '(' ;
 RPAREN : ')' ;
-STRING : (([a-z]|[A-Z])+ WHITESPACE*)+;
+STRING : '"'(([a-z]|[A-Z]|[0-9])+ WHITESPACE*)+ '"';
 RANGE : [1-5]'..'[1-5];
 WHITESPACE : [ \t\r\n]+ -> skip ;
 

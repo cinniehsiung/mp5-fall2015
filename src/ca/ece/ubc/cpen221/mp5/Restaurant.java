@@ -53,6 +53,23 @@ public class Restaurant {
 	final private Set<String> schools = new HashSet<String>();
 
 	final private JSONObject restaurantJSON;
+	
+	public Restaurant(){
+	    this.city = "Error";
+	    this.address = "Error";
+	    this.state = "Error";
+	    
+	    this.businessID = "Error";
+	    this.name = "Error Message";
+	    this.type = "Error";
+	    this.stars = -1.0;
+	    this.reviewCount = -1;
+	    this.price = -1;
+	    this.photo = "Error";
+	    
+	    this.restaurantJSON = new JSONObject();	    
+	    
+	}
 
 	/**
 	 * This is the constructor for <b>restaurant</b>.
@@ -227,6 +244,14 @@ public class Restaurant {
 		return photo;
 	}
 
+	/**
+	 * 
+	 */
+	public JSONObject getRestaurantJSON() {
+	    return (JSONObject) restaurantJSON.clone();
+	}
+	
+	
 	/**
 	 * A method to get the universities near the restaurant.
 	 * 

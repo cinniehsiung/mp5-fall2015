@@ -6,15 +6,15 @@ import java.util.Set;
 
 import org.junit.Test;
 
-public class TreeTestTest {
+public class QueryParserTest {
 
 	RestaurantDB testDB = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
 	@Test
 	public void simpleTest1() {
-		TreeTest parser = new TreeTest();
+		QueryParser parser = new QueryParser();
 
-        String query = "(category(Mexican) && price(1..2)) || (category(Hot Dogs) && in(UC Campus Area) && price(1..3))";
+        String query = "(category(\"Mexican\") && price(1..2)) || (category(\"Hot Dogs\") && in(\"UC Campus Area\") && price(1..3))";
 
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 
@@ -28,9 +28,9 @@ public class TreeTestTest {
 
 	@Test
 	public void andTest1() {
-		TreeTest parser = new TreeTest();
+		QueryParser parser = new QueryParser();
 
-		String query = "category(Bars) || (price(1..3) && rating(4..5))";
+		String query = "(category(\"Bars\")) || (price(1..3) && rating(4..5))";
 
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 
@@ -47,7 +47,7 @@ public class TreeTestTest {
 		String query1 = "category(Chinese) && price(1..2)";
 		String query2 = "category(Chinese) && rating(4..5)";
 
-		// query3 only gests query2 stuff, not both of them
+		// query3 only gets query2 stuff, not both of them
 		String query3 = "(category(Chinese) && price(1..2)) || (category(Chinese) && rating(4..5))";
 	}
 

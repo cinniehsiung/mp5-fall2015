@@ -50,8 +50,7 @@ public class RestaurantDBWorker implements Runnable {
 					if (inputLine.equals("Bye.")) {
 						break;
 					}
-
-					// when the client enters a query, process it
+					
 					outputLine = database.query(inputLine).toString();
 					if ("[]".equals(outputLine)) {
 						outputLine = "No Results Found. Sorry :(";

@@ -14,8 +14,7 @@ public class RestaurantDBClient {
 	 * @param hostname
 	 *            the hostname of the computer running RestaurantDBServer
 	 * @param port
-	 *            the remote port to listen to, the same as RestaurantDBServer,
-	 *            0 <= port <= 65535
+	 *            the remote port to listen to, the same as RestaurantDBServer
 	 */
 	public RestaurantDBClient(String hostname, int port) {
 		try (
@@ -47,14 +46,11 @@ public class RestaurantDBClient {
 				if (fromUser != null) {
 					// print to the console for verification purposes
 					System.out.println("Client: " + fromUser);
-					// as well as print to the socket and thus to the server
-					out.println(fromUser);
-					out.flush();
-
-					// exit key
 					if (fromUser.equals("Bye.")) {
 						break;
 					}
+					// as well as print to the socket and thus to the server
+					out.println(fromUser);
 				}
 			}
 		} catch (IOException e) {

@@ -281,8 +281,9 @@ public class RestaurantDB {
 		// TODO: Implement this method
 		// Write specs, etc.
 
-		TreeTest test = new TreeTest();
+		QueryParser test = new QueryParser();
 		return test.parseQuery(queryString, this);
+				
 	}
 
 	/**
