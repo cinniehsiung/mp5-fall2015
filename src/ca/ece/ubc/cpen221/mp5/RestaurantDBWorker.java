@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Set;
+
+import org.json.simple.JSONObject;
 
 public class RestaurantDBWorker implements Runnable {
 
@@ -50,7 +53,7 @@ public class RestaurantDBWorker implements Runnable {
 					if (inputLine.equals("Bye.")) {
 						break;
 					}
-					
+
 					// when the client enters a special request process it
 					else if (isSpecialRequest(inputLine)) {
 						outputLine = processSpecialRequest(inputLine);
@@ -58,10 +61,7 @@ public class RestaurantDBWorker implements Runnable {
 
 					else {
 						// when the client enters a query, process it
-						outputLine = database.query(inputLine).toString();
-						if ("[]".equals(outputLine)) {
-							outputLine = "No Results Found. Sorry :(";
-						}
+						outputLine = processQuery(inputLine);
 					}
 					// then print the answer to the socket, self-flushing
 					out.println(outputLine);
@@ -115,37 +115,67 @@ public class RestaurantDBWorker implements Runnable {
 	final private static int START_INDEX_ADDREVIEW = 11;
 
 	private String processSpecialRequest(String request) {
-		String requestAns = "";
+		JSONObject JSONStringObj = new JSONObject();
+		JSONStringObj.put("Your request is", "missing quotation marks or contains other such syntax errors.");
+
+		String requestAns = JSONStringObj.toJSONString();
 		String requestType = request.substring(0, request.indexOf("("));
 		int END_INDEX = request.length() - 2;
 
-		if ("randomReview".equals(requestType)) {
-			String restaurantName = request.substring(START_INDEX_RANDOMREVIEW, END_INDEX);
-			requestAns = database.randomReview(restaurantName);
-		}
+		if ('\"' == request.charAt(request.indexOf("(") + 1) && '\"' == request.charAt(request.length() - 2)) {
 
-		else if ("getRestaurant".equals(requestType)) {
-			String businessID = request.substring(START_INDEX_GETRESTAURANT, END_INDEX);
-			requestAns = database.getRestaurant(businessID);
-		}
+			if ("randomReview".equals(requestType)) {
+				String restaurantName = request.substring(START_INDEX_RANDOMREVIEW, END_INDEX);
+				requestAns = database.randomReview(restaurantName);
+			}
 
-		else if ("addRestaurant".equals(requestType)) {
-			String restaurantDetails = request.substring(START_INDEX_ADDRESTAURANT, END_INDEX);
-			requestAns = database.addRestaurant(restaurantDetails);
-		}
+			else if ("getRestaurant".equals(requestType)) {
+				String businessID = request.substring(START_INDEX_GETRESTAURANT, END_INDEX);
+				requestAns = database.getRestaurant(businessID);
+			}
 
-		else if ("addUser".equals(requestType)) {
-			String userDetails = request.substring(START_INDEX_ADDUSER, END_INDEX);
-			requestAns = database.addUser(userDetails);
+			else if ("addRestaurant".equals(requestType)) {
+				String restaurantDetails = request.substring(START_INDEX_ADDRESTAURANT, END_INDEX);
+				requestAns = database.addRestaurant(restaurantDetails);
+			}
 
-		}
+			else if ("addUser".equals(requestType)) {
+				String userDetails = request.substring(START_INDEX_ADDUSER, END_INDEX);
+				requestAns = database.addUser(userDetails);
 
-		else if ("addReview".equals(requestType)) {
-			String reviewDetails = request.substring(START_INDEX_ADDREVIEW, END_INDEX);
-			requestAns = database.addReview(reviewDetails);
+			}
+
+			else if ("addReview".equals(requestType)) {
+				String reviewDetails = request.substring(START_INDEX_ADDREVIEW, END_INDEX);
+				requestAns = database.addReview(reviewDetails);
+			}
 		}
 
 		return requestAns;
+	}
+
+	private String processQuery(String inputLine) {
+		Restaurant errorRestaurant = new Restaurant();
+		String outputLine;
+
+		Set<Restaurant> replySet = database.query(inputLine);
+		if (replySet.isEmpty()) {
+			JSONObject JSONObj = new JSONObject();
+			JSONObj.put("Sorry,", "no results were found for your query.");
+			outputLine = JSONObj.toJSONString();
+		}
+
+		else if (replySet.contains(errorRestaurant)) {
+			JSONObject JSONObj = new JSONObject();
+			JSONObj.put("Sorry,", "your query could not be parsed. Check your syntax and try again.");
+			outputLine = JSONObj.toJSONString();
+		}
+
+		else {
+			outputLine = replySet.toString();
+		}
+
+		return outputLine;
 	}
 
 }
