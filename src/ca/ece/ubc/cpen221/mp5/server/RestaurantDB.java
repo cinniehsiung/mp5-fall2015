@@ -1,6 +1,8 @@
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.server;
+
 
 import java.io.BufferedReader;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,6 +23,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import ca.ece.ubc.cpen221.mp5.*;
+import ca.ece.ubc.cpen221.mp5.queryParsing.QueryParser;
 
 // TODO: This class represents the Restaurant Database.
 // Define the internal representation and 

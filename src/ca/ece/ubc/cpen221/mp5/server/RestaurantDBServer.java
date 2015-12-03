@@ -110,18 +110,5 @@ public class RestaurantDBServer {
 		return;
 	}
 
-	/**
-	 * This method responds to the queries given by a client by determining
-	 * which request type it is responding to, and searches for the appropriate
-	 * set.
-	 * 
-	 * @param request
-	 * @param search
-	 * @return
-	 */
-	public Set<Restaurant> respondRequest(String request, String search) {
-		Set<Restaurant> results = Collections.synchronizedSet(new HashSet<Restaurant>());
-		return Collections.unmodifiableSet(database.respondRequest(request, search));
-	}
 
 }

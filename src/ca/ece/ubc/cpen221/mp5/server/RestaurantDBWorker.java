@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.Set;
 
 import org.json.simple.JSONObject;
+
+import ca.ece.ubc.cpen221.mp5.*;
 
 public class RestaurantDBWorker implements Runnable {
 
