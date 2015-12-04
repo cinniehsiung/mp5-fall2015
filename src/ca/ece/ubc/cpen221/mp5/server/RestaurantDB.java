@@ -32,9 +32,9 @@ import ca.ece.ubc.cpen221.mp5.queryParsing.QueryParser;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
-	private List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
-	private List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
-	private List<User> userDB = new CopyOnWriteArrayList<User>();
+	private final List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
+	private final List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
+	private final List<User> userDB = new CopyOnWriteArrayList<User>();
 
 	// clarifying constants
 	public static String KEY_RESTAURANT = "This restaurant was";
