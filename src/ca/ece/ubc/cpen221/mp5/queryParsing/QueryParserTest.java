@@ -17,7 +17,7 @@ public class QueryParserTest {
 	public void simpleTest1() {
 		QueryParser parser = new QueryParser();
 
-        String query = "(category(\"Mexican\") && price(1..2)) || (category(\"Hot Dogs\") && in(\"UC Campus Area\") && price(1..3))";
+        String query = "name(\"D'Yar\")";
 
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 

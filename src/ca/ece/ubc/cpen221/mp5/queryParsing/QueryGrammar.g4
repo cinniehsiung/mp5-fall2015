@@ -1,7 +1,7 @@
 grammar QueryGrammar;
 
 @header {
-package ca.ece.ubc.cpen221.mp5;
+package ca.ece.ubc.cpen221.mp5.queryParsing;
 }
 
 // This adds code to the generated lexer and parser. Do not change these lines.
@@ -37,7 +37,7 @@ PRICE : 'price' LPAREN RANGE RPAREN;
 NAME : 'name' LPAREN STRING RPAREN;
 LPAREN : '(' ;
 RPAREN : ')' ;
-STRING : '"'(([a-z]|[A-Z]|[0-9])+ WHITESPACE*)+ '"';
+STRING : '"'(LPAREN?([a-z]|[A-Z]|[0-9]|'&'|','|'\''|'-'|'.')+ WHITESPACE* RPAREN?)+ '"';
 RANGE : [1-5]'..'[1-5];
 WHITESPACE : [ \t\r\n]+ -> skip ;
 

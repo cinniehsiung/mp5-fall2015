@@ -57,7 +57,7 @@ public class RestaurantDBTest {
 	    int count = 1;
 	    List<String> categories = new ArrayList<String>();
 	    
-	    for(Restaurant currentRestaurant : testDB.restaurantDB){
+	    for(Restaurant currentRestaurant : testDB.getAllRestaurantDetails()){
 	        for (String currentcategory : currentRestaurant.getCategories()){
 	            if(!categories.contains(currentcategory)){
 	                categories.add(currentcategory);	                
@@ -67,4 +67,38 @@ public class RestaurantDBTest {
 	    Collections.sort(categories);
 	    System.out.println(categories.toString());
 	}
+	
+	@Test
+    public void findNames(){
+        RestaurantDB testDB = new RestaurantDB("data/restaurants.json", "data/reviews.json",
+                "data/users.json");
+        int count = 1;
+        List<String> names = new ArrayList<String>();
+        
+        for(Restaurant currentRestaurant : testDB.getAllRestaurantDetails()){
+                if(!names.contains(currentRestaurant.getName())){
+                    names.add(currentRestaurant.getName());                    
+                }
+            }
+        Collections.sort(names);
+        System.out.println(names.toString());
+    }
+	
+	@Test
+    public void findNeighbourhoods(){
+        RestaurantDB testDB = new RestaurantDB("data/restaurants.json", "data/reviews.json",
+                "data/users.json");
+        int count = 1;
+        List<String> neighbourhood = new ArrayList<String>();
+        
+        for(Restaurant currentRestaurant : testDB.getAllRestaurantDetails()){
+            for (String currentNeighbourhood : currentRestaurant.getNeighbourhoods()){
+                if(!neighbourhood.contains(currentNeighbourhood)){
+                    neighbourhood.add(currentNeighbourhood);                    
+                }
+            }
+        }
+        Collections.sort(neighbourhood);
+        System.out.println(neighbourhood.toString());
+    }
 }

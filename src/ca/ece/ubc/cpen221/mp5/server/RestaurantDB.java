@@ -180,8 +180,14 @@ public class RestaurantDB {
 		JSONStringObj.put(KEY_RESTAURANT, NOTFOUND);
 		String restaurantDetails = JSONStringObj.toJSONString();
 
+		Restaurant foundRestaurant = findRestaurantIterator(businessID);
+		
+		if(!"Error Message".equals(foundRestaurant.getName())){
+		    restaurantDetails = foundRestaurant.getJSONDetails();
+		}
+		
 		// iterate through the restaurant database
-		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+		/*Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
 			// as soon as we find a restaurant with the desired business ID
 			Restaurant currentRestaurant = restaurantItr.next();
@@ -190,10 +196,35 @@ public class RestaurantDB {
 				restaurantDetails = currentRestaurant.getJSONDetails();
 				break;
 			}
-		}
+		}*/
 
 		return restaurantDetails;
 
+	}
+	/**
+	 * This method iterates through the database's list of all restaurants, and returns a Restaurant
+	 * with a businessID that matches the given businessID.
+	 * 
+	 * @param businessID
+	 *         String representing the business ID of a particular restaurant.
+	 * @return a Restaurant with the given businessID.
+	 */
+	public Restaurant findRestaurantIterator(String businessID){
+	    
+	    Restaurant restaurantDetails = new Restaurant();
+	 // iterate through the restaurant database
+        Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+        while (restaurantItr.hasNext()) {
+            // as soon as we find a restaurant with the desired business ID
+            Restaurant currentRestaurant = restaurantItr.next();
+            if (currentRestaurant.getBusinessID().equals(businessID)) {
+                // then get the restaurant details and return it
+                restaurantDetails = currentRestaurant;
+                break;
+            }
+        }
+        
+        return restaurantDetails;
 	}
 
 	/**
