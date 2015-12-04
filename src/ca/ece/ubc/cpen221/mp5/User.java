@@ -25,7 +25,8 @@ public class User {
 	// fields for review
 	final private String url;
 	final private Map<String, Long> votes = new HashMap<String, Long>();
-	private Long reviewCount; // rep invariant greater than 0
+	private Long reviewCount; // rep invariant greater than 0, reviewCount is equal to the number of ratings done by user
+
 	final private String type; // rep invariant should always be "user"
 	final private String userID;
 	final private String name;

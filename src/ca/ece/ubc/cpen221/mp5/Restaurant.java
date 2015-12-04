@@ -47,7 +47,7 @@ public class Restaurant {
 	final private Set<String> categories = new HashSet<String>();
 
 	final private double stars; // rep invariant check if 10 or 5 max
-	private long reviewCount;
+	private long reviewCount; // RI: is equal to the number of ratings (stars)
 	final private long price; // rep invariant price > 0
 	final private String photo;
 	final private Set<String> schools = new HashSet<String>();

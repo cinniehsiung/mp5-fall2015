@@ -33,9 +33,9 @@ import ca.ece.ubc.cpen221.mp5.queryParsing.QueryParser;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
-	private List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
-	private List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
-	private List<User> userDB = new CopyOnWriteArrayList<User>();
+	private final List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
+	private final List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
+	private final List<User> userDB = new CopyOnWriteArrayList<User>();
 
 	// clarifying constants
 	public static String KEY_RESTAURANT = "This restaurant was";
@@ -182,8 +182,14 @@ public class RestaurantDB {
 		JSONStringObj.put(KEY_RESTAURANT, NOTFOUND);
 		String restaurantDetails = JSONStringObj.toJSONString();
 
+		Restaurant foundRestaurant = findRestaurantIterator(businessID);
+		
+		if(!"Error Message".equals(foundRestaurant.getName())){
+		    restaurantDetails = foundRestaurant.getJSONDetails();
+		}
+		
 		// iterate through the restaurant database
-		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+		/*Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
 			// as soon as we find a restaurant with the desired business ID
 			Restaurant currentRestaurant = restaurantItr.next();
@@ -192,10 +198,35 @@ public class RestaurantDB {
 				restaurantDetails = currentRestaurant.getJSONDetails();
 				break;
 			}
-		}
+		}*/
 
 		return restaurantDetails;
 
+	}
+	/**
+	 * This method iterates through the database's list of all restaurants, and returns a Restaurant
+	 * with a businessID that matches the given businessID.
+	 * 
+	 * @param businessID
+	 *         String representing the business ID of a particular restaurant.
+	 * @return a Restaurant with the given businessID.
+	 */
+	public Restaurant findRestaurantIterator(String businessID){
+	    
+	    Restaurant restaurantDetails = new Restaurant();
+	 // iterate through the restaurant database
+        Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+        while (restaurantItr.hasNext()) {
+            // as soon as we find a restaurant with the desired business ID
+            Restaurant currentRestaurant = restaurantItr.next();
+            if (currentRestaurant.getBusinessID().equals(businessID)) {
+                // then get the restaurant details and return it
+                restaurantDetails = currentRestaurant;
+                break;
+            }
+        }
+        
+        return restaurantDetails;
 	}
 
 	/**
@@ -429,5 +460,27 @@ public class RestaurantDB {
 		copy.addAll(this.restaurantDB);
 		return Collections.unmodifiableList(copy);
 	}
+	
+	/**
+     * Helper method for the Algorithms class to get all the Review details.
+     * 
+     * @return a list of Review objects
+     */
+    public List<Review> getAllReviewDetails() {
+        List<Review> copy = new CopyOnWriteArrayList();
+        copy.addAll(this.reviewDB);
+        return Collections.unmodifiableList(copy);
+    }
+    
+    /**
+     * Helper method for the Algorithms class to get all the user details.
+     * 
+     * @return a list of user objects
+     */
+    public List<User> getAllUserDetails() {
+        List<User> copy = new CopyOnWriteArrayList();
+        copy.addAll(this.userDB);
+        return Collections.unmodifiableList(copy);
+    }
 
 }
