@@ -25,7 +25,11 @@ public class User {
 	// fields for review
 	final private String url;
 	final private Map<String, Long> votes = new HashMap<String, Long>();
+<<<<<<< HEAD
 	final private Long reviewCount; // rep invariant greater than 0, reviewCount is equal to the number of ratings done by user
+=======
+	private Long reviewCount; // rep invariant greater than 0
+>>>>>>> 299333177d6b73aa10aa5f9b9c2ccb4648641797
 	final private String type; // rep invariant should always be "user"
 	final private String userID;
 	final private String name;
@@ -118,6 +122,16 @@ public class User {
 	 */
 	public Double getAvgStars() {
 		return avgStars;
+	}
+
+	/**
+	 * Helper method to increment the user count for the restaurant.
+	 */
+	public void incrementReview() {
+		this.reviewCount = reviewCount++;
+		JSONObject originalObject = this.userJSON;
+		long count = (long) originalObject.get(REVIEWCOUNT_KEY);
+		userJSON.put(REVIEWCOUNT_KEY, ++count);
 	}
 
 	@Override

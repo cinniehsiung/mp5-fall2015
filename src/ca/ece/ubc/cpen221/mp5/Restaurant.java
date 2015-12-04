@@ -52,22 +52,22 @@ public class Restaurant {
 	final private Set<String> schools = new HashSet<String>();
 
 	final private JSONObject restaurantJSON;
-	
-	public Restaurant(){
-	    this.city = "Error";
-	    this.address = "Error";
-	    this.state = "Error";
-	    
-	    this.businessID = "Error";
-	    this.name = "Error Message";
-	    this.type = "Error";
-	    this.stars = -1.0;
-	    this.reviewCount = -1;
-	    this.price = -1;
-	    this.photo = "Error";
-	    
-	    this.restaurantJSON = new JSONObject();	    
-	    
+
+	public Restaurant() {
+		this.city = "Error";
+		this.address = "Error";
+		this.state = "Error";
+
+		this.businessID = "Error";
+		this.name = "Error Message";
+		this.type = "Error";
+		this.stars = -1.0;
+		this.reviewCount = -1;
+		this.price = -1;
+		this.photo = "Error";
+
+		this.restaurantJSON = new JSONObject();
+
 	}
 
 	/**
@@ -247,10 +247,9 @@ public class Restaurant {
 	 * 
 	 */
 	public JSONObject getRestaurantJSON() {
-	    return (JSONObject) restaurantJSON.clone();
+		return (JSONObject) restaurantJSON.clone();
 	}
-	
-	
+
 	/**
 	 * A method to get the universities near the restaurant.
 	 * 
@@ -273,6 +272,16 @@ public class Restaurant {
 		return clone;
 	}
 
+	/**
+	 * Helper method to increment the review count for the restaurant.
+	 */
+	public void incrementReview() {
+		this.reviewCount = reviewCount++;
+		JSONObject originalObject = this.restaurantJSON;
+		long count = (long) originalObject.get(REVIEWCOUNT_KEY);
+		restaurantJSON.put(REVIEWCOUNT_KEY, ++count);
+	}
+
 	@Override
 	/**
 	 * The method returns the String representation of a restaurant -- its name.
@@ -281,7 +290,7 @@ public class Restaurant {
 	 */
 	public String toString() {
 		return this.getJSONDetails();
-		//return this.name;
+		// return this.name;
 	}
 
 	@Override
@@ -308,5 +317,5 @@ public class Restaurant {
 	public int hashCode() {
 		return this.businessID.hashCode();
 	}
-	
+
 }

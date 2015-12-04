@@ -1,6 +1,5 @@
 package ca.ece.ubc.cpen221.mp5.server;
 
-
 import java.io.BufferedReader;
 
 import java.io.FileNotFoundException;
@@ -311,6 +310,7 @@ public class RestaurantDB {
 
 			if (!existingReview) {
 				this.reviewDB.add(newReview);
+
 				JSONStringObj.clear();
 				JSONStringObj.put(KEY_REVIEW, ADDED);
 			}
@@ -416,5 +416,38 @@ public class RestaurantDB {
 
 		return results;
 	}
+
+	/**
+	 * Helper method for the Algorithms class to get all the restaurant details.
+	 * 
+	 * @return a list of restaurant objects
+	 */
+	public List<Restaurant> getAllRestaurantDetails() {
+		List<Restaurant> copy = new CopyOnWriteArrayList();
+		copy.addAll(this.restaurantDB);
+		return Collections.unmodifiableList(copy);
+	}
+	
+	/**
+     * Helper method for the Algorithms class to get all the Review details.
+     * 
+     * @return a list of Review objects
+     */
+    public List<Review> getAllReviewDetails() {
+        List<Review> copy = new CopyOnWriteArrayList();
+        copy.addAll(this.reviewDB);
+        return Collections.unmodifiableList(copy);
+    }
+    
+    /**
+     * Helper method for the Algorithms class to get all the user details.
+     * 
+     * @return a list of user objects
+     */
+    public List<User> getAllUserDetails() {
+        List<User> copy = new CopyOnWriteArrayList();
+        copy.addAll(this.userDB);
+        return Collections.unmodifiableList(copy);
+    }
 
 }
