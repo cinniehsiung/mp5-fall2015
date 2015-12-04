@@ -33,8 +33,9 @@ public class Restaurant {
 	final static String SCHOOLS_KEY = "schools";
 
 	// fields for restaurant
-	private double[] location = { 0, 0 }; // rep invariant check legal long/lat
-											// numbers
+	final private double[] location = new double[2]; // rep invariant check
+														// legal long/lat
+	// numbers
 	final private String city;
 	final private String address;
 	final private String state;
@@ -54,6 +55,9 @@ public class Restaurant {
 	final private JSONObject restaurantJSON;
 
 	public Restaurant() {
+		this.location[LONGITUDE] = -122.254;
+		this.location[LATITUDE] = 38.872;
+
 		this.city = "Error";
 		this.address = "Error";
 		this.state = "Error";

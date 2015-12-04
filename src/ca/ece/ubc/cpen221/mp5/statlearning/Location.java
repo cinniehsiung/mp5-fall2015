@@ -39,6 +39,26 @@ public class Location {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		boolean isEqual = false;
+
+		Location loc = (Location) obj;
+
+		double long1 = this.longitude;
+		double lat1 = this.latitude;
+
+		double long2 = loc.longitude;
+		double lat2 = loc.latitude;
+
+		if (Math.abs(long1 - long2) <= 0.00000005 && Math.abs(lat1 - lat2) <= 0.00000000000005) {
+			isEqual = true;
+		}
+
+		return isEqual;
+
+	}
+
+	@Override
 	public String toString() {
 		return "(" + longitude + ", " + latitude + ")";
 	}

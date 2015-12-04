@@ -3,6 +3,7 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,13 +34,27 @@ public class Algorithms {
 		// get initial restaurant clusters
 		Map<Location, Set<Restaurant>> clusters = getRestaurantClusters(allRestaurants, allCentroids);
 
-		List<Location> newCentroids;
+		// do until reaches steady state
+		List<Location> newCentroids = allCentroids;
+		List<Location> oldCentroids;
 		do {
+			// save the old centroids for comparison
+			oldCentroids = newCentroids;
+			// find the new centroids with the new clusters
 			newCentroids = findCentroids(clusters);
 
-		} while (!newCentroids.equals(allCentroids));
-		
-		return null;
+			// find the new clusters
+			clusters = getRestaurantClusters(allRestaurants, newCentroids);
+
+		} while (!newCentroids.equals(oldCentroids));
+
+		List<Set<Restaurant>> kMeansClusters = Collections.synchronizedList(new ArrayList<Set<Restaurant>>());
+
+		for (Location currentLoc : clusters.keySet()) {
+			kMeansClusters.add(clusters.get(currentLoc));
+		}
+
+		return kMeansClusters;
 	}
 
 	public static String convertClustersToJSON(List<Set<Restaurant>> clusters) {
@@ -77,24 +92,26 @@ public class Algorithms {
 			double distance = Double.MAX_VALUE;
 			Restaurant currentRestaurant = ResItr.next();
 
+			Location closestCentroid = null;
 			Iterator<Location> locItr = allCentroids.iterator();
 			while (locItr.hasNext()) {
 				Location currentCentroid = locItr.next();
 				double newDistance = currentCentroid.getAbsoluteDistance(currentRestaurant);
 
 				if (newDistance < distance) {
-					if (clusters.get(currentCentroid) == null) {
-						Set<Restaurant> clusterSet = new HashSet<Restaurant>();
-						clusterSet.add(currentRestaurant);
-						clusters.put(currentCentroid, clusterSet);
-					}
-
-					else {
-						clusters.get(currentCentroid).add(currentRestaurant);
-					}
-
+					closestCentroid = currentCentroid;
 					distance = newDistance;
 				}
+			}
+
+			if (clusters.get(closestCentroid) == null) {
+				Set<Restaurant> clusterSet = new HashSet<Restaurant>();
+				clusterSet.add(currentRestaurant);
+				clusters.put(closestCentroid, clusterSet);
+			}
+
+			else {
+				clusters.get(closestCentroid).add(currentRestaurant);
 			}
 		}
 
