@@ -35,7 +35,7 @@ public class AlgorithmsLeastSquares {
         List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
         List<Review> allReviews = db.getAllReviewDetails();
 
-        List<Point> allPoints = new LinkedList<Point>();
+        List<Point> allPoints = Collections.synchronizedList(new LinkedList<Point>());
 
         // iterate through all reviews to find reviews written by the given user
         for (Review currentReview : allReviews) {
@@ -49,8 +49,12 @@ public class AlgorithmsLeastSquares {
                 // feature of the given restaurant we want to analyze (eg.
                 // price)
                 double feature = featureFunction.f(currentRestaurant, db);
+                
+                System.out.println("Feature: " + feature);
                 // rating given by the given user (in stars)
                 double ratingGivenByUser = currentReview.getStars();
+                
+                System.out.println("Rating: " + ratingGivenByUser);
 
                 Point newPoint = new Point(feature, ratingGivenByUser);
                 allPoints.add(newPoint);
@@ -63,59 +67,77 @@ public class AlgorithmsLeastSquares {
         double sumOfSquaresYY;
         double sumOfSquaresXY;
 
-        double b;
-        double a;
-        double rSquared;
+        double b = 0.0;
+        double a = 0.0;
+        double rSquared = 0.0;
 
         PredictorFF predictorFunction;
 
         // If allPoints is empty, or if there is only one point, what do we do?
-        Point meanPoint = calculateMeans(allPoints);
+        if (allPoints.size() > 1) {
+            Point meanPoint = calculateMeans(allPoints);
 
-        List<Double> sumOfSquares = calculateSumOfSquares(meanPoint, allPoints);
-        sumOfSquaresXX = sumOfSquares.get(SXX_INDEX);
-        sumOfSquaresYY = sumOfSquares.get(SYY_INDEX);
-        sumOfSquaresXY = sumOfSquares.get(SXY_INDEX);
+            List<Double> sumOfSquares = calculateSumOfSquares(meanPoint, allPoints);
+            sumOfSquaresXX = sumOfSquares.get(SXX_INDEX);
+            sumOfSquaresYY = sumOfSquares.get(SYY_INDEX);
+            sumOfSquaresXY = sumOfSquares.get(SXY_INDEX);
+            
+            System.out.println("Sxx = " + sumOfSquaresXX);
+            System.out.println("Syy = " + sumOfSquaresYY);
+            System.out.println("Sxy = " + sumOfSquaresXY);
 
-        b = sumOfSquaresXY / sumOfSquaresXX;
-        a = meanPoint.getRating() - b * meanPoint.getFeature();
+            
 
-        rSquared = Math.pow(sumOfSquaresXY, 2) / (sumOfSquaresXX * sumOfSquaresYY);
+            b = sumOfSquaresXY / sumOfSquaresXX;
+            a = meanPoint.getRating() - b * meanPoint.getFeature();
 
-        predictorFunction = new PredictorFF(a, b, rSquared, featureFunction);
+            System.out.println("b = " + b);
+            System.out.println("a = " + a);
+            
+            rSquared = Math.pow(sumOfSquaresXY, 2) / (sumOfSquaresXX * sumOfSquaresYY);
+        }
+
+        List<Point> cloneOfAllPoints = Collections.synchronizedList(new LinkedList<Point>());
+        cloneOfAllPoints.addAll(allPoints);        
+        
+        if(allPoints.isEmpty()){
+            throw new IllegalArgumentException("This user has completed 0 reviews - a prediction function cannot be generated. Sorry!");
+        }
+        predictorFunction = new PredictorFF(a, b, rSquared, featureFunction, cloneOfAllPoints);            
 
         return predictorFunction;
     }
 
     /**
-     * This method takes a user and a list of feature function, and returns the feature function
-     * with the highest r_squared value.
+     * This method takes a user and a list of feature function, and returns the
+     * feature function with the highest r_squared value.
      * 
      * @param u
-     *          User that we want to find the best predictor for.
+     *            User that we want to find the best predictor for.
      * @param db
-     *          Database that the User and Restaurants are in.
+     *            Database that the User and Restaurants are in.
      * @param featureFunctionList
-     *          A List of MP5Functions from which we want to calculate the best predictor.
-     *          
-     * @return a MP5Function that is the best predictor for the give User (lowest r_squared value). If there are 
-     *          multiple featureFunctions that produce the same r_squared, it will return the first featureFunction
-     *          in the given featureFunctionList.
+     *            A List of MP5Functions from which we want to calculate the
+     *            best predictor.
+     * 
+     * @return a MP5Function that is the best predictor for the give User
+     *         (lowest r_squared value). If there are multiple featureFunctions
+     *         that produce the same r_squared, it will return the latest
+     *         featureFunction in the given featureFunctionList.
      */
     public static MP5Function getBestPredictor(User u, RestaurantDB db, List<MP5Function> featureFunctionList) {
         MP5Function bestPredictor = null;
-        
+
         double rSquared = 0.0;
-        
-        for(MP5Function currentFunction : featureFunctionList){
+
+        for (MP5Function currentFunction : featureFunctionList) {
             PredictorFF predictorFF = (PredictorFF) getPredictor(u, db, currentFunction);
-            if(predictorFF.getRSquared() > rSquared){
+            if (predictorFF.getRSquared() >= rSquared) {
                 rSquared = predictorFF.getRSquared();
-                bestPredictor = predictorFF;
+                bestPredictor = currentFunction;
             }
         }
-        
-        
+
         return bestPredictor;
     }
 
@@ -170,14 +192,11 @@ public class AlgorithmsLeastSquares {
             xi = currentPoint.getFeature();
             yi = currentPoint.getRating();
 
-            Sxx += (xi - xMean);
-            Syy += (yi - yMean);
+            Sxx += Math.pow((xi - xMean), 2);
+            Syy += Math.pow((yi - yMean), 2);
             Sxy += (xi - xMean) * (yi - yMean);
 
         }
-
-        Sxx = Math.pow(Sxx, 2);
-        Syy = Math.pow(Syy, 2);
 
         sumOfSquares.add(SXX_INDEX, Sxx);
         sumOfSquares.add(SYY_INDEX, Syy);

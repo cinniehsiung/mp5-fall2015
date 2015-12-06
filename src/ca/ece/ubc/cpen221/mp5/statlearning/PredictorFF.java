@@ -10,15 +10,18 @@ public class PredictorFF implements MP5Function{
     double b;
     double rSquared;
     MP5Function featureFunction;
+    List<Point> allPoints;
+    
     
     //representation of the line y = ax + b
     //where y is the rating, and x is the feature (eg. price)
     
-    public PredictorFF(double a, double b, double rSquared, MP5Function featureFunction){
+    public PredictorFF(double a, double b, double rSquared, MP5Function featureFunction, List<Point> allPoints){
         this.a = a;
         this.b = b;
         this.rSquared = rSquared;
         this.featureFunction = featureFunction;
+        this.allPoints = allPoints;
     }
     
     /**
@@ -31,10 +34,26 @@ public class PredictorFF implements MP5Function{
      */
     @Override
     public double f(Restaurant yelpRestaurant, RestaurantDB db) {       
+        if(allPoints.size() == 1){
+            return allPoints.get(0).getRating();
+        }
+        if(allPoints.isEmpty()){
+            return -1.0;
+        }
+        
         double predictedRating;
         double x = featureFunction.f(yelpRestaurant, db);      
         
-        predictedRating = a*x + b;        
+        System.out.println("x = " + x);
+        
+        predictedRating = a + b*x;        
+        
+        if(predictedRating > 5.0){
+            predictedRating = 5.0;
+        }
+        else if(predictedRating < 0.0){
+            predictedRating = 0.0;
+        }
         
         return predictedRating;
     }

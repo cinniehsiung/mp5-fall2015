@@ -102,9 +102,6 @@ public class QueryParser {
         // final set of restaurants corresponding to query
         private final Set<Restaurant> restaurantSet = Collections.synchronizedSet(new HashSet<Restaurant>());
 
-        // flags for types of query
-        boolean isQuery = false;
-
         // Constants for parsing
         private final int IN_START_INDEX = 4;
         private final int CATEGORY_START_INDEX = 10;
@@ -184,7 +181,6 @@ public class QueryParser {
         @Override
         public void exitAtom(@NotNull QueryGrammarParser.AtomContext ctx) {
             String text = ctx.start.getText();
-            isQuery = true;
 
             // if the atomic expression is for 'in', get the substring of the
             // neighbourhood and respond to the request

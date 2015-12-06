@@ -17,7 +17,7 @@ public class QueryParserTest {
 	public void simpleTest1() {
 		QueryParser parser = new QueryParser();
 
-        String query = "name(\"D'Yar\")";
+        String query = "name(\"The Sunny Side Caf\u00e9\")";
 
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 
