@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5.statlearning;
+package ca.ece.ubc.cpen221.mp5.statlearning.FF;
 
 import ca.ece.ubc.cpen221.mp5.Restaurant;
 import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;

@@ -25,37 +25,50 @@ public class User {
 	// fields for review
 	final private String url;
 	final private Map<String, Long> votes = new HashMap<String, Long>();
-	private Long reviewCount; // rep invariant greater than 0, reviewCount is equal to the number of ratings done by user
+	private Long reviewCount; // rep invariant greater than 0, reviewCount is
+								// equal to the number of ratings done by user
 
 	final private String type; // rep invariant should always be "user"
 	final private String userID;
 	final private String name;
 	final private Double avgStars; // rep invariant greater than 0
 
-	final private JSONObject userJSON;
-
 	/**
-	 * This is the constructor for <b>review</b>.
+	 * This is the constructor for <b>user</b>.
 	 * 
 	 * @param obj
 	 *            the review details in JSON format
 	 */
 	public User(JSONObject obj) {
-		this.userJSON = (JSONObject) obj.clone();
+		JSONObject userJSON = obj;
+		this.url = (String) userJSON.get(URL_KEY);
+		this.reviewCount = (Long) userJSON.get(REVIEWCOUNT_KEY);
+		this.type = (String) userJSON.get(TYPE_KEY);
+		this.userID = (String) userJSON.get(USERID_KEY);
+		this.name = (String) userJSON.get(NAME_KEY);
+		this.avgStars = (Double) userJSON.get(AVGSTARS_KEY);
 
-		this.url = (String) this.userJSON.get(URL_KEY);
-		this.reviewCount = (Long) this.userJSON.get(REVIEWCOUNT_KEY);
-		this.type = (String) this.userJSON.get(TYPE_KEY);
-		this.userID = (String) this.userJSON.get(USERID_KEY);
-		this.name = (String) this.userJSON.get(NAME_KEY);
-		this.avgStars = (Double) this.userJSON.get(AVGSTARS_KEY);
-
-		JSONObject allVotes = (JSONObject) this.userJSON.get(VOTES_KEY);
+		JSONObject allVotes = (JSONObject) userJSON.get(VOTES_KEY);
 		this.votes.put(COOL_KEY, (Long) allVotes.get(COOL_KEY));
 		this.votes.put(USEFUL_KEY, (Long) allVotes.get(USEFUL_KEY));
 		this.votes.put(FUNNY_KEY, (Long) allVotes.get(FUNNY_KEY));
 	}
+	/**
+	 * This is a error constructor for <b>user</b>.
+	 */
+	public User(){
+		this.url = "Error";
+		this.reviewCount = 0L;
+		this.type = "Error";
+		this.userID = "Error";
+		this.name = "Error";
+		this.avgStars = 0.0;
 
+		this.votes.put(COOL_KEY, 0L);
+		this.votes.put(USEFUL_KEY, 0L);
+		this.votes.put(FUNNY_KEY, 0L);
+	}
+	
 	/**
 	 * A method to return the url of the user.
 	 * 
@@ -122,13 +135,10 @@ public class User {
 	}
 
 	/**
-	 * Helper method to increment the user count for the restaurant.
+	 * Helper method to increment the user review count for the database.
 	 */
 	public void incrementReview() {
 		this.reviewCount = reviewCount++;
-		JSONObject originalObject = this.userJSON;
-		long count = (long) originalObject.get(REVIEWCOUNT_KEY);
-		userJSON.put(REVIEWCOUNT_KEY, ++count);
 	}
 
 	@Override

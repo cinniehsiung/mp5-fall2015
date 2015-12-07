@@ -3,7 +3,6 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -11,6 +10,12 @@ import org.junit.Test;
 import ca.ece.ubc.cpen221.mp5.Restaurant;
 import ca.ece.ubc.cpen221.mp5.User;
 import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
+import ca.ece.ubc.cpen221.mp5.statlearning.FF.CategoryFF;
+import ca.ece.ubc.cpen221.mp5.statlearning.FF.LatitudeFF;
+import ca.ece.ubc.cpen221.mp5.statlearning.FF.LongitudeFF;
+import ca.ece.ubc.cpen221.mp5.statlearning.FF.MP5Function;
+import ca.ece.ubc.cpen221.mp5.statlearning.FF.MeanRatingFF;
+import ca.ece.ubc.cpen221.mp5.statlearning.FF.PriceScaleFF;
 
 public class AlgorithmsLeastSquaresTest {
 
@@ -65,10 +70,10 @@ public class AlgorithmsLeastSquaresTest {
     @Test
     public void testGetPredictor() {
         //latitude prediction
-        MP5Function latitudePredictorTest1 = AlgorithmsLeastSquares.getPredictor(firstUser, db, latitudeFFTest);
+        MP5Function latitudePredictorTest1 = Algorithms.getPredictor(firstUser, db, latitudeFFTest);
         System.out.println("\n");
         // MP5Function latitudePredictorTest2 = AlgorithmsLeastSquares.getPredictor(secondUser, db, latitudeFFTest);
-        MP5Function latitudePredictorTest3 = AlgorithmsLeastSquares.getPredictor(thirdUser, db, latitudeFFTest);
+        MP5Function latitudePredictorTest3 = Algorithms.getPredictor(thirdUser, db, latitudeFFTest);
         
         double predictedLa1 = latitudePredictorTest1.f(toPredict, db);
         // double predictedL2a = latitudePredictorTest2.f(toPredict, db);
@@ -79,10 +84,10 @@ public class AlgorithmsLeastSquaresTest {
         
         
         //longitude prediction
-        MP5Function longitudePredictorTest1 = AlgorithmsLeastSquares.getPredictor(firstUser, db, longitudeFFTest);
+        MP5Function longitudePredictorTest1 = Algorithms.getPredictor(firstUser, db, longitudeFFTest);
         System.out.println("\n");
         //MP5Function longitudePredictorTest2 = AlgorithmsLeastSquares.getPredictor(secondUser, db, longitudeFFTest);
-        MP5Function longitudePredictorTest3 = AlgorithmsLeastSquares.getPredictor(thirdUser, db, longitudeFFTest);
+        MP5Function longitudePredictorTest3 = Algorithms.getPredictor(thirdUser, db, longitudeFFTest);
           
         double predictedLo1 = longitudePredictorTest1.f(toPredict, db);
         // double predictedLo2 = longitudePredictorTest2.f(toPredict, db);
@@ -95,10 +100,10 @@ public class AlgorithmsLeastSquaresTest {
 
         
         //mean rating prediction
-        MP5Function mRPredictorTest1 = AlgorithmsLeastSquares.getPredictor(firstUser, db, meanRatingFFTest);
+        MP5Function mRPredictorTest1 = Algorithms.getPredictor(firstUser, db, meanRatingFFTest);
         System.out.println("\n");
         //MP5Function mRPredictorTest2 = AlgorithmsLeastSquares.getPredictor(secondUser, db, meanRatingFFTest);
-        MP5Function mRPredictorTest3 = AlgorithmsLeastSquares.getPredictor(thirdUser, db, meanRatingFFTest);
+        MP5Function mRPredictorTest3 = Algorithms.getPredictor(thirdUser, db, meanRatingFFTest);
            
         double predictedMR1 = mRPredictorTest1.f(toPredict, db);
         // double predictedMR2 = mRPredictorTest2.f(toPredict, db);
@@ -111,10 +116,10 @@ public class AlgorithmsLeastSquaresTest {
 
         
         //price scale prediction
-        MP5Function pSPredictorTest1 = AlgorithmsLeastSquares.getPredictor(firstUser, db, priceScaleFFTest);
+        MP5Function pSPredictorTest1 = Algorithms.getPredictor(firstUser, db, priceScaleFFTest);
         System.out.println("\n");
         //MP5Function pSPredictorTest2 = AlgorithmsLeastSquares.getPredictor(secondUser, db, priceScaleFFTest);
-        MP5Function pSPredictorTest3 = AlgorithmsLeastSquares.getPredictor(thirdUser, db, priceScaleFFTest);
+        MP5Function pSPredictorTest3 = Algorithms.getPredictor(thirdUser, db, priceScaleFFTest);
         
         double predictedPS1 = pSPredictorTest1.f(toPredict, db);
         // double predictedPS2 = pSPredictorTest2.f(toPredict, db);
@@ -127,10 +132,10 @@ public class AlgorithmsLeastSquaresTest {
 
         
         //category prediction
-        MP5Function categoryPredictorTest1 = AlgorithmsLeastSquares.getPredictor(firstUser, db, categoryFFTest);
+        MP5Function categoryPredictorTest1 = Algorithms.getPredictor(firstUser, db, categoryFFTest);
         System.out.println("\n");
         //MP5Function categoryPredictorTest2 = AlgorithmsLeastSquares.getPredictor(secondUser, db, categoryFFTest);
-        MP5Function categoryPredictorTest3 = AlgorithmsLeastSquares.getPredictor(thirdUser, db, categoryFFTest);
+        MP5Function categoryPredictorTest3 = Algorithms.getPredictor(thirdUser, db, categoryFFTest);
         
         double predictedCa1 = categoryPredictorTest1.f(toPredict, db);
         // double predictedCa2 = categoryPredictorTest2.f(toPredict, db);
@@ -143,7 +148,7 @@ public class AlgorithmsLeastSquaresTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void noReviewsUserGetPredictor(){
-        MP5Function categoryPredictorTest1 = AlgorithmsLeastSquares.getPredictor(noReviewsUser, db, categoryFFTest);
+        MP5Function categoryPredictorTest1 = Algorithms.getPredictor(noReviewsUser, db, categoryFFTest);
         
     }
 
@@ -156,8 +161,8 @@ public class AlgorithmsLeastSquaresTest {
         featureFunctionList.add(meanRatingFFTest);
         featureFunctionList.add(priceScaleFFTest);
         
-        MP5Function bestPredict1 = AlgorithmsLeastSquares.getBestPredictor(firstUser, db, featureFunctionList);
-        MP5Function bestPredict3 = AlgorithmsLeastSquares.getBestPredictor(thirdUser, db, featureFunctionList);
+        MP5Function bestPredict1 = Algorithms.getBestPredictor(firstUser, db, featureFunctionList);
+        MP5Function bestPredict3 = Algorithms.getBestPredictor(thirdUser, db, featureFunctionList);
         
         assertEquals(bestPredict1, priceScaleFFTest);
         assertEquals(bestPredict3, priceScaleFFTest);
@@ -184,8 +189,8 @@ public class AlgorithmsLeastSquaresTest {
         testList2.add(p1);
         testList2.add(p6);
 
-        Point testMean1 = AlgorithmsLeastSquares.calculateMeans(testList1);
-        Point testMean2 = AlgorithmsLeastSquares.calculateMeans(testList2);
+        Point testMean1 = Algorithms.calculateMeans(testList1);
+        Point testMean2 = Algorithms.calculateMeans(testList2);
 
         assertEquals(testMean1, new Point(3.0, 3.0));
         assertEquals(testMean2.getFeature(), 1.583333, 0.000001);
@@ -214,11 +219,11 @@ public class AlgorithmsLeastSquaresTest {
         testList2.add(p1);
         testList2.add(p6);
 
-        Point testMean1 = AlgorithmsLeastSquares.calculateMeans(testList1);
-        Point testMean2 = AlgorithmsLeastSquares.calculateMeans(testList2);
+        Point testMean1 = Algorithms.calculateMeans(testList1);
+        Point testMean2 = Algorithms.calculateMeans(testList2);
 
-        List<Double> test1 = AlgorithmsLeastSquares.calculateSumOfSquares(testMean1, testList1);
-        List<Double> test2 = AlgorithmsLeastSquares.calculateSumOfSquares(testMean2, testList2);
+        List<Double> test1 = Algorithms.calculateSumOfSquares(testMean1, testList1);
+        List<Double> test2 = Algorithms.calculateSumOfSquares(testMean2, testList2);
 
         double Sxx1 = test1.get(0);
         double Syy1 = test1.get(1);

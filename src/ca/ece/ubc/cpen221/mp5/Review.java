@@ -9,6 +9,28 @@ import org.json.simple.JSONObject;
 // TODO: Use this class to represent a Yelp review.
 public class Review {
 
+	/*
+	 * Abstraction Function: TODO
+	 */
+
+	// Rep Invariant:
+
+	// 0 <= votes <= 5 (max and min votes for the reviews)
+	// 0 <= stars <= 5 (max and min ratings for the review)
+
+	// reviewID is unique to the review such that two reviewIDs will be
+	// identical if and only if they are the same review
+	// userID is unique to the user who wrote the review such that two userIDs
+	// will only be identical if and only if they are the same user
+
+	// the date is in the form year/month/day
+	// year is greater than TODO and less than or equal to our present year:
+	// 2015
+	// 1 <= month <= 12
+	// 1 <= day <= 31 or 30 depending on the month. If the month is February (2)
+	// then day must be less than 28.
+	// leap years calculated accordingly TODO: change this to be more legit
+
 	// constants for ease of reading and clarity purposes
 	final static String TYPE_KEY = "type";
 	final static String BUSINESSID_KEY = "business_id";

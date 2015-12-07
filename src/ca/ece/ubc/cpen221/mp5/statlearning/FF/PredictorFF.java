@@ -1,9 +1,10 @@
-package ca.ece.ubc.cpen221.mp5.statlearning;
+package ca.ece.ubc.cpen221.mp5.statlearning.FF;
 
 import java.util.List;
 
 import ca.ece.ubc.cpen221.mp5.Restaurant;
 import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
+import ca.ece.ubc.cpen221.mp5.statlearning.Point;
 
 public class PredictorFF implements MP5Function{
     double a;

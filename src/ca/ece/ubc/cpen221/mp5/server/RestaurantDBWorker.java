@@ -118,7 +118,8 @@ public class RestaurantDBWorker implements Runnable {
 
 	private String processSpecialRequest(String request) {
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put("Your request is", "missing quotation marks or contains other such syntax errors.");
+		JSONStringObj.put("Error.",
+				"Your request is missing quotation marks or contains other such syntax errors. Please try again.");
 
 		String requestAns = JSONStringObj.toJSONString();
 		String requestType = request.substring(0, request.indexOf("("));
@@ -163,18 +164,17 @@ public class RestaurantDBWorker implements Runnable {
 		Set<Restaurant> replySet = database.query(inputLine);
 		if (replySet.isEmpty()) {
 			JSONObject JSONObj = new JSONObject();
-			JSONObj.put("Sorry,", "no results were found for your query.");
+			JSONObj.put("Sorry.", "No results were found for your query.");
 			outputLine = JSONObj.toJSONString();
 		}
 
 		else if (replySet.contains(errorRestaurant)) {
 			JSONObject JSONObj = new JSONObject();
-			JSONObj.put("Sorry,", "your query could not be parsed. Check your syntax and try again.");
+			JSONObj.put("Error.", "Your query could not be parsed. Check your syntax and try again.");
 			outputLine = JSONObj.toJSONString();
 		}
 
 		else {
-			// outputLine = replySet.toString();
 			outputLine = replySet.toString();
 		}
 

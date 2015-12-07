@@ -33,18 +33,13 @@ import ca.ece.ubc.cpen221.mp5.queryParsing.QueryParser;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
+	// Rep Invariant:
+
+	// restaurantDB, reviewDB, and userDB must be at least of size 1.
+
 	private final List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
 	private final List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
 	private final List<User> userDB = new CopyOnWriteArrayList<User>();
-
-	// clarifying constants
-	public static String KEY_RESTAURANT = "This restaurant was";
-	public static String KEY_REVIEW = "This review was";
-	public static String KEY_USER = "This user was";
-	public static String ADDED = "added sucessfully.";
-	public static String NOTADDED = "not added because it already exists.";
-	public static String NOTFOUND = "not found.";
-	public static String FORMATERROR = "not added because it was formatted incorrectly.";
 
 	/**
 	 * Create a database from the Yelp dataset given the names of three files:
@@ -119,12 +114,13 @@ public class RestaurantDB {
 	 * @param restaurantName
 	 *            the restaurant in which to search for a random review
 	 * @return the name of the random review in JSON format, if the request is
-	 *         invalid, returns "No Review Found. Sorry :(".
+	 *         invalid, returns {"Sorry.":
+	 *         "No reviews were found for this restaurant."}.
 	 */
 	public String randomReview(String restaurantName) {
 		// create a suitable json string if a review could not be found
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(KEY_REVIEW, NOTFOUND);
+		JSONStringObj.put("Sorry.", "No reviews were found for this restaurant.");
 		String randomReview = JSONStringObj.toJSONString();
 
 		// iterate through the restaurant database
@@ -174,59 +170,76 @@ public class RestaurantDB {
 	 *            the business identifier of which to find the restaurant
 	 *            details
 	 * @return the restaurant details in JSON format, if the request is invalid,
-	 *         returns "Sorry. The restaurant was not found.".
+	 *         returns {"Sorry.": "This restaurant was not found."}.
 	 */
 	public String getRestaurant(String businessID) {
 		// create a suitable json string if the restaurant could not be found
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(KEY_RESTAURANT, NOTFOUND);
+		JSONStringObj.put("Sorry.", "This restaurant was not found.");
 		String restaurantDetails = JSONStringObj.toJSONString();
 
+		// find the correct restaurant with the matching businessID
 		Restaurant foundRestaurant = findRestaurantIterator(businessID);
-		
-		if(!"Error Message".equals(foundRestaurant.getName())){
-		    restaurantDetails = foundRestaurant.getJSONDetails();
+
+		if (!"Error Message".equals(foundRestaurant.getName())) {
+			restaurantDetails = foundRestaurant.getJSONDetails();
 		}
-		
+
+		return restaurantDetails;
+
+	}
+
+	/**
+	 * This method iterates through the database's list of all restaurants, and
+	 * returns a Restaurant with a businessID that matches the given businessID.
+	 * 
+	 * @param businessID
+	 *            String representing the business ID of a particular
+	 *            restaurant.
+	 * @return a Restaurant with the given businessID.
+	 */
+	public Restaurant findRestaurantIterator(String businessID) {
+
+		Restaurant restaurantDetails = new Restaurant();
 		// iterate through the restaurant database
-		/*Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
+		Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
 		while (restaurantItr.hasNext()) {
 			// as soon as we find a restaurant with the desired business ID
 			Restaurant currentRestaurant = restaurantItr.next();
 			if (currentRestaurant.getBusinessID().equals(businessID)) {
 				// then get the restaurant details and return it
-				restaurantDetails = currentRestaurant.getJSONDetails();
+				restaurantDetails = currentRestaurant;
 				break;
 			}
-		}*/
+		}
 
 		return restaurantDetails;
-
 	}
+
 	/**
-	 * This method iterates through the database's list of all restaurants, and returns a Restaurant
-	 * with a businessID that matches the given businessID.
+	 * This method iterates through the database's list of all users, and
+	 * returns a User with a userID that matches the given userID.
 	 * 
-	 * @param businessID
-	 *         String representing the business ID of a particular restaurant.
-	 * @return a Restaurant with the given businessID.
+	 * @param userID
+	 *            String representing the user ID of a particular User.
+	 * @return a User with the given userID.
 	 */
-	public Restaurant findRestaurantIterator(String businessID){
-	    
-	    Restaurant restaurantDetails = new Restaurant();
-	 // iterate through the restaurant database
-        Iterator<Restaurant> restaurantItr = this.restaurantDB.iterator();
-        while (restaurantItr.hasNext()) {
-            // as soon as we find a restaurant with the desired business ID
-            Restaurant currentRestaurant = restaurantItr.next();
-            if (currentRestaurant.getBusinessID().equals(businessID)) {
-                // then get the restaurant details and return it
-                restaurantDetails = currentRestaurant;
-                break;
-            }
-        }
-        
-        return restaurantDetails;
+	public User findUserIterator(String userID) {
+
+		User userDetails = new User();
+		// iterate through the restaurant database
+		Iterator<User> userItr = this.userDB.iterator();
+		while (userItr.hasNext()) {
+			// as soon as we find a restaurant with the desired business ID
+			User currentUser = userItr.next();
+			if (currentUser.getUserID().equals(userID)) {
+				// then get the restaurant details and return it
+				userDetails = currentUser;
+				break;
+			}
+		}
+
+		return userDetails;
 	}
 
 	/**
@@ -236,13 +249,23 @@ public class RestaurantDB {
 	 * 
 	 * @param restaurantDetails
 	 *            the restaurant details in JSON format
+	 * @return {"Error.":
+	 *         "This restaurant already exists and was therefore not added."} if
+	 *         the restaurant already exists.
+	 * 
+	 * @return {"Cheers.": "This restaurant was added successfully."} if the
+	 *         restaurant was added successfully
+	 * 
+	 * @return {"Error.":
+	 *         "There was a syntax error in your request. Please try again." if
+	 *         there was a parsing error
 	 */
 	public String addRestaurant(String restaurantDetails) {
 		boolean existingRestaurant = false;
 
 		// create a suitable json string if the restaurant was not added
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(KEY_RESTAURANT, NOTADDED);
+		JSONStringObj.put("Error.", "This restaurant already exists and was therefore not added.");
 
 		try {
 			// create a restaurant from the given json details
@@ -265,14 +288,14 @@ public class RestaurantDB {
 				// then add it to the database
 				this.restaurantDB.add(newRestaurant);
 				JSONStringObj.clear();
-				JSONStringObj.put(KEY_RESTAURANT, ADDED);
+				JSONStringObj.put("Cheers.", "This restaurant was added sucessfully.");
 			}
 
 			// if we can't make a restaurant with the given restaurant details
 		} catch (ParseException e) {
 			// return a suitable json formattted string with the error message
 			JSONStringObj.clear();
-			JSONStringObj.put(KEY_RESTAURANT, FORMATERROR);
+			JSONStringObj.put("Error.", "There was a syntax error in your request. Please try again.");
 		}
 
 		return JSONStringObj.toJSONString();
@@ -284,11 +307,22 @@ public class RestaurantDB {
 	 * 
 	 * @param userDetails
 	 *            the user details in JSON format
+	 * 
+	 * @return {"Error.":
+	 *         "This user already exists and was therefore not added."} if the
+	 *         user already exists.
+	 * 
+	 * @return {"Cheers.": "This user was added successfully."} if the user was
+	 *         added successfully
+	 * 
+	 * @return {"Error.":
+	 *         "There was a syntax error in your request. Please try again." if
+	 *         there was a parsing error
 	 */
 	public String addUser(String userDetails) {
 		boolean existingUser = false;
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(KEY_USER, NOTADDED);
+		JSONStringObj.put("Error.", "This user already exists and was therefore not added.");
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -305,13 +339,13 @@ public class RestaurantDB {
 			if (!existingUser) {
 				this.userDB.add(newUser);
 				JSONStringObj.clear();
-				JSONStringObj.put(KEY_USER, ADDED);
+				JSONStringObj.put("Cheers.", "This user was added successfully.");
 			}
 
 		} catch (ParseException e) {
 			// e.printStackTrace();
 			JSONStringObj.clear();
-			JSONStringObj.put(KEY_USER, FORMATERROR);
+			JSONStringObj.put("Error.", "There was a syntax error in your request. Please try again.");
 		}
 
 		return JSONStringObj.toJSONString();
@@ -323,11 +357,24 @@ public class RestaurantDB {
 	 * 
 	 * @param userReview
 	 *            the review details in JSON format
+	 * @requires the restaurant that is reviewed and the user who reviewed to
+	 *           already exist in the database TODO
+	 * 
+	 * @return {"Error.":
+	 *         "This review already exists and was therefore not added."} if the
+	 *         review already exists.
+	 * 
+	 * @return {"Cheers.": "This review was added successfully."} if the
+	 *         restaurant was added successfully
+	 * 
+	 * @return {"Error.":
+	 *         "There was a syntax error in your request. Please try again." if
+	 *         there was a parsing error
 	 */
 	public String addReview(String reviewDetails) {
 		boolean existingReview = false;
 		JSONObject JSONStringObj = new JSONObject();
-		JSONStringObj.put(KEY_REVIEW, NOTADDED);
+		JSONStringObj.put("Error.", "This review already exists and was therefore not added.");
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -343,14 +390,18 @@ public class RestaurantDB {
 
 			if (!existingReview) {
 				this.reviewDB.add(newReview);
+				Restaurant restaurantReviewed = this.findRestaurantIterator(newReview.getBusinessID());
+				restaurantReviewed.incrementReview();
+				User userWhoReviewed = this.findUserIterator(newReview.getUserID());
+				userWhoReviewed.incrementReview();
 
 				JSONStringObj.clear();
-				JSONStringObj.put(KEY_REVIEW, ADDED);
+				JSONStringObj.put("Cheers.", "This review was added successfully.");
 			}
 
 		} catch (ParseException e) {
 			JSONStringObj.clear();
-			JSONStringObj.put(KEY_REVIEW, FORMATERROR);
+			JSONStringObj.put("Error.", "There was a syntax error in your request. Please try again.");
 		}
 
 		return JSONStringObj.toJSONString();
@@ -460,27 +511,27 @@ public class RestaurantDB {
 		copy.addAll(this.restaurantDB);
 		return Collections.unmodifiableList(copy);
 	}
-	
+
 	/**
-     * Helper method for the Algorithms class to get all the Review details.
-     * 
-     * @return a list of Review objects
-     */
-    public List<Review> getAllReviewDetails() {
-        List<Review> copy = new CopyOnWriteArrayList();
-        copy.addAll(this.reviewDB);
-        return Collections.unmodifiableList(copy);
-    }
-    
-    /**
-     * Helper method for the Algorithms class to get all the user details.
-     * 
-     * @return a list of user objects
-     */
-    public List<User> getAllUserDetails() {
-        List<User> copy = new CopyOnWriteArrayList();
-        copy.addAll(this.userDB);
-        return Collections.unmodifiableList(copy);
-    }
+	 * Helper method for the Algorithms class to get all the Review details.
+	 * 
+	 * @return a list of Review objects
+	 */
+	public List<Review> getAllReviewDetails() {
+		List<Review> copy = new CopyOnWriteArrayList();
+		copy.addAll(this.reviewDB);
+		return Collections.unmodifiableList(copy);
+	}
+
+	/**
+	 * Helper method for the Algorithms class to get all the user details.
+	 * 
+	 * @return a list of user objects
+	 */
+	public List<User> getAllUserDetails() {
+		List<User> copy = new CopyOnWriteArrayList();
+		copy.addAll(this.userDB);
+		return Collections.unmodifiableList(copy);
+	}
 
 }

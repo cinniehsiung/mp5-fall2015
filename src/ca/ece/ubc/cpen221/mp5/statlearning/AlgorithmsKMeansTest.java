@@ -10,12 +10,11 @@ import org.junit.Test;
 import ca.ece.ubc.cpen221.mp5.Restaurant;
 import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
 
-public class AlgorithmsTest {
+public class AlgorithmsKMeansTest {
 
 	@Test
 	public void testKMeansClustering() {
 		List<Set<Restaurant>> ans;
-
 		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
 		ans = Algorithms.kMeansClustering(7, db);
@@ -27,17 +26,9 @@ public class AlgorithmsTest {
 
 	@Test
 	public void testConvertClustersToJSON() {
-		fail("Not yet implemented");
-	}
+		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
-	@Test
-	public void testGetPredictor() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetBestPredictor() {
-		fail("Not yet implemented");
+		System.out.println(Algorithms.convertClustersToJSON(Algorithms.kMeansClustering(5, db)));
 	}
 
 }

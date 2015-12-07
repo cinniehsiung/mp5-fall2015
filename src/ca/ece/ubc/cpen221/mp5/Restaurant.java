@@ -11,6 +11,25 @@ import org.json.simple.JSONObject;
 // State the rep invariant and abs
 
 public class Restaurant {
+	/**
+	 * Abstraction Function: TODO
+	 */
+
+	// Rep Invariant:
+
+	// No fields can be null. city, address, state, neighborhoods and schools
+	// must
+	// represent real cities, address, states, neighborhoods and universities.
+	// -180 <= Location[0] <= 180
+	// -90 <= Location[1] <= 90 (max and min values for longitude and latitude)
+
+	// BusinessIDs for each restaurant must be unique such that this restaurant
+	// is equal to that restaurant if and only if they are the same restaurant.
+
+	// 0 <= stars <= 5. (max and min ratings)
+	// 0 <= review count (can not have negative reviews)
+	// 0 <= price <= 5. (max and min price ratings)
+
 	// constants for ease of reading and clarity purposes
 	final static int LONGITUDE = 0;
 	final static int LATITUDE = 1;
@@ -33,8 +52,8 @@ public class Restaurant {
 	final static String SCHOOLS_KEY = "schools";
 
 	// fields for restaurant
-	final private double[] location = new double[2]; // rep invariant check
-														// legal long/lat
+	final private double[] location = new double[2];
+
 	// numbers
 	final private String city;
 	final private String address;
@@ -46,17 +65,19 @@ public class Restaurant {
 	final private String type;
 	final private Set<String> categories = new HashSet<String>();
 
-	final private double stars; // rep invariant check if 10 or 5 max
+	final private double stars; // rep invariant check if 5 max
 	private long reviewCount; // RI: is equal to the number of ratings (stars)
 	final private long price; // rep invariant price > 0
 	final private String photo;
 	final private Set<String> schools = new HashSet<String>();
 
-	final private JSONObject restaurantJSON;
-
+	/**
+	 * This is the constructor for an error restaurant. Used to signal errors in
+	 * the queries clients enter into the server.
+	 */
 	public Restaurant() {
-		this.location[LONGITUDE] = -122.254;
-		this.location[LATITUDE] = 38.872;
+		this.location[LONGITUDE] = 0;
+		this.location[LATITUDE] = 0;
 
 		this.city = "Error";
 		this.address = "Error";
@@ -70,8 +91,6 @@ public class Restaurant {
 		this.price = -1;
 		this.photo = "Error";
 
-		this.restaurantJSON = new JSONObject();
-
 	}
 
 	/**
@@ -81,35 +100,35 @@ public class Restaurant {
 	 *            the restaurant details in JSON format
 	 */
 	public Restaurant(JSONObject obj) {
-		this.restaurantJSON = (JSONObject) obj.clone();
+		JSONObject restaurantJSON = (JSONObject) obj.clone();
 
-		this.location[LONGITUDE] = (Double) this.restaurantJSON.get(LONGITUDE_KEY);
-		this.location[LATITUDE] = (Double) this.restaurantJSON.get(LATITUDE_KEY);
+		this.location[LONGITUDE] = (Double) restaurantJSON.get(LONGITUDE_KEY);
+		this.location[LATITUDE] = (Double) restaurantJSON.get(LATITUDE_KEY);
 
-		this.city = (String) this.restaurantJSON.get(CITY_KEY);
-		this.address = (String) this.restaurantJSON.get(ADDRESS_KEY);
-		this.state = (String) this.restaurantJSON.get(STATE_KEY);
+		this.city = (String) restaurantJSON.get(CITY_KEY);
+		this.address = (String) restaurantJSON.get(ADDRESS_KEY);
+		this.state = (String) restaurantJSON.get(STATE_KEY);
 
-		JSONArray allNeighborhoods = (JSONArray) this.restaurantJSON.get(NEIGHBORHOOD_KEY);
+		JSONArray allNeighborhoods = (JSONArray) restaurantJSON.get(NEIGHBORHOOD_KEY);
 		for (Object currentNeighbor : allNeighborhoods) {
 			this.neighbourhood.add((String) currentNeighbor);
 		}
 
-		this.businessID = (String) this.restaurantJSON.get(BUSINESSID_KEY);
-		this.name = (String) this.restaurantJSON.get(NAME_KEY);
-		this.type = (String) this.restaurantJSON.get(TYPE_KEY);
+		this.businessID = (String) restaurantJSON.get(BUSINESSID_KEY);
+		this.name = (String) restaurantJSON.get(NAME_KEY);
+		this.type = (String) restaurantJSON.get(TYPE_KEY);
 
-		JSONArray allCategories = (JSONArray) this.restaurantJSON.get(CATEGORIES_KEY);
+		JSONArray allCategories = (JSONArray) restaurantJSON.get(CATEGORIES_KEY);
 		for (Object currentCategory : allCategories) {
 			this.categories.add((String) currentCategory);
 		}
 
-		this.stars = (Double) this.restaurantJSON.get(STARS_KEY);
-		this.reviewCount = (long) this.restaurantJSON.get(REVIEWCOUNT_KEY);
-		this.price = (long) this.restaurantJSON.get(PRICE_KEY);
-		this.photo = (String) this.restaurantJSON.get(PHOTO_KEY);
+		this.stars = (Double) restaurantJSON.get(STARS_KEY);
+		this.reviewCount = (long) restaurantJSON.get(REVIEWCOUNT_KEY);
+		this.price = (long) restaurantJSON.get(PRICE_KEY);
+		this.photo = (String) restaurantJSON.get(PHOTO_KEY);
 
-		JSONArray allSchools = (JSONArray) this.restaurantJSON.get(SCHOOLS_KEY);
+		JSONArray allSchools = (JSONArray) restaurantJSON.get(SCHOOLS_KEY);
 		for (Object currentSchool : allSchools) {
 			this.schools.add((String) currentSchool);
 		}
@@ -121,7 +140,7 @@ public class Restaurant {
 	 * @return the restaurant details in JSON format.
 	 */
 	public String getJSONDetails() {
-		return this.restaurantJSON.toJSONString();
+		return this.getRestaurantJSON().toJSONString();
 	}
 
 	/**
@@ -248,10 +267,46 @@ public class Restaurant {
 	}
 
 	/**
-	 * 
+	 * A method to return a JSONObject with the restaurant details.
 	 */
 	public JSONObject getRestaurantJSON() {
-		return (JSONObject) restaurantJSON.clone();
+		JSONObject restaurantJSON = new JSONObject();
+
+		restaurantJSON.put(LONGITUDE_KEY, this.location[LONGITUDE]);
+		restaurantJSON.put(LATITUDE_KEY, this.location[LATITUDE]);
+
+		restaurantJSON.put(CITY_KEY, this.city);
+		restaurantJSON.put(ADDRESS_KEY, this.address);
+		restaurantJSON.put(STATE_KEY, this.state);
+
+		JSONArray allNeighborhoods = new JSONArray();
+		for (String currentNeighbor : this.neighbourhood) {
+			allNeighborhoods.add(currentNeighbor);
+		}
+		restaurantJSON.put(NEIGHBORHOOD_KEY, allNeighborhoods);
+
+		restaurantJSON.put(BUSINESSID_KEY, this.businessID);
+		restaurantJSON.put(NAME_KEY, this.name);
+		restaurantJSON.put(TYPE_KEY, this.type);
+
+		JSONArray allCategories = new JSONArray();
+		for (String currentCategory : this.categories) {
+			allCategories.add(currentCategory);
+		}
+		restaurantJSON.put(CATEGORIES_KEY, allCategories);
+
+		restaurantJSON.put(STARS_KEY, this.stars);
+		restaurantJSON.put(REVIEWCOUNT_KEY, this.reviewCount);
+		restaurantJSON.put(PRICE_KEY, this.price);
+		restaurantJSON.put(PHOTO_KEY, this.photo);
+
+		JSONArray allSchools = new JSONArray();
+		for (String currentSchool : this.schools) {
+			allSchools.add(currentSchool);
+		}
+		restaurantJSON.put(SCHOOLS_KEY, allSchools);
+
+		return restaurantJSON;
 	}
 
 	/**
@@ -271,9 +326,7 @@ public class Restaurant {
 	 * @return The cloned restaurant.
 	 */
 	public Restaurant clone() {
-		Restaurant clone = new Restaurant(this.restaurantJSON);
-
-		return clone;
+		return new Restaurant(this.getRestaurantJSON());
 	}
 
 	/**
@@ -281,14 +334,12 @@ public class Restaurant {
 	 */
 	public void incrementReview() {
 		this.reviewCount = reviewCount++;
-		JSONObject originalObject = this.restaurantJSON;
-		long count = (long) originalObject.get(REVIEWCOUNT_KEY);
-		restaurantJSON.put(REVIEWCOUNT_KEY, ++count);
 	}
 
 	@Override
 	/**
-	 * The method returns the String representation of a restaurant -- its name.
+	 * The method returns the String representation of a restaurant -- its
+	 * details in JSON format.
 	 * 
 	 * @return the String representation of a restaurant.
 	 */
