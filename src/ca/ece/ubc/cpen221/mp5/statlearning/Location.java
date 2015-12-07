@@ -67,45 +67,39 @@ public class Location {
 	}
 
 	/**
-	 * Helper method to generate a list of differing locations.
+	 * Helper method to generate a list of differing locations where there is a
+	 * restaurant existing on each location.
 	 * 
 	 * @param numberOfLocations
 	 *            the number of unique locations to generate
+	 * @param database
+	 *            the database with the restaurant locations
 	 * @return a list of random differing locations.
 	 */
-	public static List<Location> getRandomLocations(int numberOfLocations, RestaurantDB db) {
+	public static List<Location> getRandomLocations(int numberOfLocations, RestaurantDB database) {
 		List<Location> allLocations = new CopyOnWriteArrayList<Location>();
-		List<String> allNeighbourHoods = new ArrayList<String>();
+		List<Restaurant> restaurants = database.getAllRestaurantDetails();
 
-		List<Restaurant> resList = db.getAllRestaurantDetails();
-		for (Restaurant curRes : resList) {
-			for (String curNeigh : curRes.getCategories()) {
-				if (!allNeighbourHoods.contains(curNeigh)) {
-					allNeighbourHoods.add(curNeigh);
-				}
+		double incrementLong = (MAX_LONGITUDE - MIN_LONGITUDE) / numberOfLocations;
+		double incrementLat = (MAX_LATITUDE - MIN_LATITUDE) / numberOfLocations;
+		double distance = Math.sqrt(Math.pow(incrementLong, 2) + Math.pow(incrementLat, 2));
+
+		Location theCentroid = Algorithms.findCentroid(restaurants);
+
+		for (Restaurant currentRestaurant : restaurants) {
+			Location newLoc = new Location(currentRestaurant.getLocation()[0], currentRestaurant.getLocation()[1]);
+			if (theCentroid.getAbsoluteDistance(currentRestaurant) - distance <= 0.0000005
+					&& !allLocations.contains(newLoc)) {
+				allLocations.add(newLoc);
+			}
+
+			if (allLocations.size() == numberOfLocations) {
+				break;
 			}
 		}
 
-		// get initial random centroids
-		for (int i = 0; i < numberOfLocations; i++) {
-			Location randomLocation;
-
-			// a do-while to check that we don't get identical centroids
-			do {
-				Random rand = new Random();
-				double randomLongitude = Location.MIN_LONGITUDE
-						+ (Location.MAX_LONGITUDE - Location.MIN_LONGITUDE) * rand.nextDouble();
-
-				double randomLatitude = Location.MIN_LATITUDE
-						+ (Location.MAX_LATITUDE - Location.MIN_LATITUDE) * rand.nextDouble();
-
-				randomLocation = new Location(randomLongitude, randomLatitude);
-
-			} while (allLocations.contains(randomLocation));
-			allLocations.add(randomLocation);
-		}
-
 		return Collections.unmodifiableList(allLocations);
+
 	}
 
 	/**

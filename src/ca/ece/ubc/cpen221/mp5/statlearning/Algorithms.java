@@ -24,11 +24,12 @@ public class Algorithms {
 	 * @return
 	 */
 	public static List<Set<Restaurant>> kMeansClustering(int k, RestaurantDB db) {
-		List<Location> allCentroids;
-		RestaurantDB database = db; // might want to clone this
+		List<Location> allCentroids = new ArrayList<Location>();
+		RestaurantDB database = db;
 
 		// get initial random centroids
-		allCentroids = Location.getRandomLocations(k);
+		allCentroids = Location.getRandomLocations(k, db);
+
 		List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
 
 		// get initial restaurant clusters
@@ -154,6 +155,28 @@ public class Algorithms {
 	 * @return the centroid of the set of restaurants.
 	 */
 	private static Location findCentroid(Set<Restaurant> cluster) {
+		double sumOfLongitudes = 0;
+		double sumOfLatitudes = 0;
+
+		for (Restaurant currentRestaurant : cluster) {
+			sumOfLongitudes = sumOfLongitudes + currentRestaurant.getLocation()[0];
+			sumOfLatitudes = sumOfLatitudes + currentRestaurant.getLocation()[1];
+		}
+
+		double newLong = sumOfLongitudes / cluster.size();
+		double newLat = sumOfLatitudes / cluster.size();
+
+		return new Location(newLong, newLat);
+	}
+	
+	/**
+	 * Helper method to find the centroid given a set of restaurants.
+	 * 
+	 * @param cluster
+	 *            the list of restaurants.
+	 * @return the centroid of the set of restaurants.
+	 */
+	static Location findCentroid(List<Restaurant> cluster) {
 		double sumOfLongitudes = 0;
 		double sumOfLatitudes = 0;
 

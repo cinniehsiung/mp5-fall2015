@@ -174,6 +174,7 @@ public class RestaurantDBWorker implements Runnable {
 		}
 
 		else {
+			// outputLine = replySet.toString();
 			outputLine = replySet.toString();
 		}
 
