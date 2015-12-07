@@ -1,11 +1,14 @@
 package ca.ece.ubc.cpen221.mp5.statlearning;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ca.ece.ubc.cpen221.mp5.Restaurant;
+import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
 
 public class Location {
 	private double longitude;
@@ -70,8 +73,18 @@ public class Location {
 	 *            the number of unique locations to generate
 	 * @return a list of random differing locations.
 	 */
-	public static List<Location> getRandomLocations(int numberOfLocations) {
+	public static List<Location> getRandomLocations(int numberOfLocations, RestaurantDB db) {
 		List<Location> allLocations = new CopyOnWriteArrayList<Location>();
+		List<String> allNeighbourHoods = new ArrayList<String>();
+
+		List<Restaurant> resList = db.getAllRestaurantDetails();
+		for (Restaurant curRes : resList) {
+			for (String curNeigh : curRes.getCategories()) {
+				if (!allNeighbourHoods.contains(curNeigh)) {
+					allNeighbourHoods.add(curNeigh);
+				}
+			}
+		}
 
 		// get initial random centroids
 		for (int i = 0; i < numberOfLocations; i++) {

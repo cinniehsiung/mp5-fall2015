@@ -19,9 +19,12 @@ public class AlgorithmsTest {
 		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
 		ans = Algorithms.kMeansClustering(5, db);
-		System.out.println(ans.toString());
+		for (int i = 0; i < ans.size(); i++) {
+			System.out.println(ans.get(i).toString());
+			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
+		}
 	}
-	
+
 	@Test
 	public void testConvertClustersToJSON() {
 		fail("Not yet implemented");
