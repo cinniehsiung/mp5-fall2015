@@ -17,4 +17,18 @@ public class Point {
         return feature;
     }
     
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Point){
+            if(((Point) obj).getFeature() == this.feature && ((Point) obj).getRating() == this.ratingGiven){
+                return true;
+            }
+        }
+        return false;       
+    }
+    
+    @Override
+    public int hashCode(){
+        return (int) (feature*ratingGiven);
+    }
 }

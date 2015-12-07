@@ -17,7 +17,7 @@ public class QueryParserTest {
 	public void simpleTest1() {
 		QueryParser parser = new QueryParser();
 
-        String query = "name(\"D'Yar\")";
+        String query = "in(\"Telegraph Ave\") && (category(\"Chinese\") || category(\"Italian\")) && price(1..2)";
 
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 
@@ -29,7 +29,7 @@ public class QueryParserTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void andTest1() {
 		QueryParser parser = new QueryParser();
 
@@ -38,7 +38,7 @@ public class QueryParserTest {
 		Set<Restaurant> result = parser.parseQuery(query, testDB);
 
 		for (Restaurant current : result) {
-			System.out.println(current.getName());
+			//System.out.println(current.getName());
 		}
 		if (result.isEmpty()) {
 			System.out.println("no results");
