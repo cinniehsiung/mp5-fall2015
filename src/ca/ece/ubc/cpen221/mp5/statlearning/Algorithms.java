@@ -2,11 +2,7 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,8 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
 import ca.ece.ubc.cpen221.mp5.*;
 import ca.ece.ubc.cpen221.mp5.server.RestaurantDB;
 import ca.ece.ubc.cpen221.mp5.statlearning.FF.MP5Function;
@@ -32,45 +26,44 @@ public class Algorithms {
 	 * 
 	 * @param db
 	 *            the restaurant database with the restaurants
+	 * @param k
+	 *            the number of clusters to compute, must be greater than 0
 	 * @return the clusters computed through k-means
 	 */
 	public static List<Set<Restaurant>> kMeansClustering(int k, RestaurantDB db) {
-		List<Location> allCentroids = new ArrayList<Location>();
-		RestaurantDB database = db;
-
-		// get initial random centroids
-		allCentroids = Location.getRandomLocations(k, db);
-
-		List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
-
-		// get initial restaurant clusters
-		Map<Location, Set<Restaurant>> clusters = getRestaurantClusters(allRestaurants, allCentroids);
-
-		// do until reaches steady state
-		List<Location> newCentroids = allCentroids;
-		List<Location> oldCentroids;
-		int count = 0;
-		do {
-			// save the old centroids for comparison
-			oldCentroids = newCentroids;
-			// find the new centroids with the new clusters
-			newCentroids = findCentroids(clusters);
-
-			// find the new clusters
-			// System.out.println("Finding new clusters. Loop: " + count);
-			clusters = getRestaurantClusters(allRestaurants, newCentroids);
-			// count++;
-
-		} while (!newCentroids.equals(oldCentroids));
-
 		// create a list to return
 		List<Set<Restaurant>> kMeansClusters = Collections.synchronizedList(new ArrayList<Set<Restaurant>>());
 
-		// put all the clusters into the list
-		for (Location currentLoc : clusters.keySet()) {
-			kMeansClusters.add(clusters.get(currentLoc));
-		}
+		if (k != 0) {
+			// get initial random centroids
+			List<Location> allCentroids = new ArrayList<Location>();
+			allCentroids = Location.getRandomLocations(k, db);
 
+			List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
+
+			// get initial restaurant clusters
+			Map<Location, Set<Restaurant>> clusters = getRestaurantClusters(allRestaurants, allCentroids);
+
+			// do until reaches steady state
+			List<Location> newCentroids = allCentroids;
+			List<Location> oldCentroids;
+
+			do {
+				// save the old centroids for comparison
+				oldCentroids = newCentroids;
+				// find the new centroids with the new clusters
+				newCentroids = findCentroids(clusters);
+
+				// find the new clusters
+				clusters = getRestaurantClusters(allRestaurants, newCentroids);
+
+			} while (!newCentroids.equals(oldCentroids));
+
+			// put all the clusters into the list
+			for (Location currentLoc : clusters.keySet()) {
+				kMeansClusters.add(clusters.get(currentLoc));
+			}
+		}
 		// return it
 		return kMeansClusters;
 	}
@@ -114,7 +107,6 @@ public class Algorithms {
 	 */
 	public static MP5Function getPredictor(User u, RestaurantDB db, MP5Function featureFunction) {
 		String userID = u.getUserID();
-		List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
 		List<Review> allReviews = db.getAllReviewDetails();
 
 		List<Point> allPoints = Collections.synchronizedList(new LinkedList<Point>());

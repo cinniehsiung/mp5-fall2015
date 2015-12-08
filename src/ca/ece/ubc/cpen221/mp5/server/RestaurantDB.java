@@ -5,22 +5,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -28,14 +21,17 @@ import org.json.simple.parser.ParseException;
 import ca.ece.ubc.cpen221.mp5.*;
 import ca.ece.ubc.cpen221.mp5.queryParsing.QueryParser;
 
-// TODO: This class represents the Restaurant Database.
-// Define the internal representation and 
-// state the rep invariant and the abstraction function.
-
 public class RestaurantDB {
-	// Rep Invariant:
+	/**
+	 * Abstraction Function: This class represents the Yelp-Restaurant Database.
+	 * restaurantDB represents a list of all the restaurants, given as
+	 * Restaurants, in the database. reviewDB represents the list of all the
+	 * reviews written. userDB represents the list of all the users of the
+	 * Yelp-Database.
+	 */
 
-	// restaurantDB, reviewDB, and userDB must be at least of size 1.
+	// Rep Invariant:
+	// restaurantDB must be at least of size1.
 
 	private final List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
 	private final List<Review> reviewDB = new CopyOnWriteArrayList<Review>();

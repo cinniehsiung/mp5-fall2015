@@ -6,11 +6,15 @@ import java.util.Map;
 
 import org.json.simple.JSONObject;
 
-// TODO: Use this class to represent a Yelp review.
 public class Review {
 
-	/*
-	 * Abstraction Function: TODO
+	/**
+	 * Abstraction Function: This class represents a Yelp review written on a
+	 * restaurant in the Yelp database with the given businessID and written by
+	 * the User with the given userID. Votes represents the ratings users gave
+	 * to the review for "cool", "useful", and "funny". Stars represents the
+	 * rating the user gave to the restaurant. And date represents the date the
+	 * review was submitted.
 	 */
 
 	// Rep Invariant:
@@ -24,15 +28,16 @@ public class Review {
 	// will only be identical if and only if they are the same user
 
 	// the date is in the form year/month/day
-	// year is greater than TODO and less than or equal to our present year:
-	// 2015
+	// year is greater than 1900 and less than or equal to 2015
 	// 1 <= month <= 12
 	// 1 <= day <= 31 or 30 depending on the month. If the month is February (2)
 	// then day must be less than 28.
-	// leap years calculated accordingly TODO: change this to be more legit
+	// leap years calculated accordingly
+
+	// type should always be "review"
 
 	// constants for ease of reading and clarity purposes
-	final static String TYPE_KEY = "type";
+	final static String TYPE_KEY = "type"; // should always be "review"
 	final static String BUSINESSID_KEY = "business_id";
 
 	final static String VOTES_KEY = "votes";

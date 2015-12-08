@@ -41,7 +41,6 @@ public class CategoryFF implements MP5Function {
         
         
         Set<String> allCategories = yelpRestaurant.getCategories();  
-        
         return (double) categoriesDB.get(allCategories.iterator().next());
 
     

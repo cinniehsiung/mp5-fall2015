@@ -22,13 +22,36 @@ public class AlgorithmsKMeansTest {
 			System.out.println(ans.get(i).toString());
 			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
 		}
+		
+		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
 
 	@Test
-	public void testConvertClustersToJSON() {
+	public void testKMeansClustering2() {
+		List<Set<Restaurant>> ans;
 		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
-		System.out.println(Algorithms.convertClustersToJSON(Algorithms.kMeansClustering(5, db)));
+		ans = Algorithms.kMeansClustering(1, db);
+		for (int i = 0; i < ans.size(); i++) {
+			System.out.println(ans.get(i).toString());
+			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
+		}
+		
+		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
+	}
+	
+	@Test
+	public void testKMeansClustering3() {
+		List<Set<Restaurant>> ans;
+		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
+
+		ans = Algorithms.kMeansClustering(0, db);
+		for (int i = 0; i < ans.size(); i++) {
+			System.out.println(ans.get(i).toString());
+			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
+		}
+		
+		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
 
 }
