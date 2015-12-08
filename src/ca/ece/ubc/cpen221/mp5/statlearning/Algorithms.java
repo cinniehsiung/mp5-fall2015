@@ -158,15 +158,15 @@ public class Algorithms {
 			sumOfSquaresYY = sumOfSquares.get(SYY_INDEX);
 			sumOfSquaresXY = sumOfSquares.get(SXY_INDEX);
 
-			System.out.println("Sxx = " + sumOfSquaresXX);
-			System.out.println("Syy = " + sumOfSquaresYY);
-			System.out.println("Sxy = " + sumOfSquaresXY);
+			//System.out.println("Sxx = " + sumOfSquaresXX);     debug purposes
+			//System.out.println("Syy = " + sumOfSquaresYY);     debug purposes
+			//System.out.println("Sxy = " + sumOfSquaresXY);     debug purposes
 
 			b = sumOfSquaresXY / sumOfSquaresXX;
 			a = meanPoint.getRating() - b * meanPoint.getFeature();
 
-			System.out.println("b = " + b);
-			System.out.println("a = " + a);
+			//System.out.println("b = " + b);                    debug purposes
+			//System.out.println("a = " + a);                    debug purposes
 
 			rSquared = Math.pow(sumOfSquaresXY, 2) / (sumOfSquaresXX * sumOfSquaresYY);
 		}
