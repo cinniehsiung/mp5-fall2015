@@ -31,6 +31,20 @@ public class Location {
 		this.longitude = longitude;
 		this.latitude = latitude;
 	}
+	
+	/**
+	 * Represents a location with longitude and latitude coordinates in degrees
+	 * in the Yelp region our dataset is contained.
+	 * 
+	 * @param longitude
+	 *            must be between -122.251 and -122.266 degrees
+	 * @param latitude
+	 *            must be between 37.86 and 37.88 degrees
+	 */
+	public Location(Restaurant res) {
+		this.longitude = res.getLocation()[0];
+		this.latitude = res.getLocation()[1];
+	}
 
 	public double getLongitude() {
 		return this.longitude;
@@ -52,7 +66,7 @@ public class Location {
 		double long2 = loc.longitude;
 		double lat2 = loc.latitude;
 
-		if (Math.abs(long1 - long2) <= 0.0000000005 && Math.abs(lat1 - lat2) <= 0.00000000000005) {
+		if (Math.abs(long1 - long2) <= 0.00000000005 && Math.abs(lat1 - lat2) <= 0.000000000000005) {
 			isEqual = true;
 		}
 
@@ -71,35 +85,6 @@ public class Location {
 	@Override
 	public String toString() {
 		return "(" + longitude + ", " + latitude + ")";
-	}
-
-	/**
-	 * Helper method to generate a list of differing locations where there is a
-	 * restaurant existing on each location around the centroid of all the
-	 * restaurants.
-	 * 
-	 * @param numberOfLocations
-	 *            the number of unique locations to generate
-	 * @param database
-	 *            the database with the restaurant locations
-	 * @return a list of random differing locations.
-	 */
-	public static List<Location> getRandomLocations(int numberOfLocations, RestaurantDB database) {
-		List<Location> allLocations = new CopyOnWriteArrayList<Location>();
-		List<Restaurant> restaurants = database.getAllRestaurantDetails();
-
-		int i = 0;
-		while (allLocations.size() < numberOfLocations && i < restaurants.size()) {
-			Restaurant currentRestaurant = restaurants.get(i);
-			Location newLoc = new Location(currentRestaurant.getLocation()[0], currentRestaurant.getLocation()[1]);
-			if (!allLocations.contains(newLoc)) {
-				allLocations.add(newLoc);
-			}
-			i++;
-		}
-
-		return Collections.unmodifiableList(allLocations);
-
 	}
 
 	/**

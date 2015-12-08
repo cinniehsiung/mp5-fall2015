@@ -5,8 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.simple.JSONArray;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,48 +27,88 @@ public class Algorithms {
 	 * @param db
 	 *            the restaurant database with the restaurants
 	 * @param k
-	 *            the number of clusters to compute, must be greater than 0 and
-	 *            less than or equal to the amount restaurants with differing
-	 *            locations in the database
+	 *            the number of clusters to compute, must be greater than 0
 	 * @return the clusters computed through k-means
 	 */
 	public static List<Set<Restaurant>> kMeansClustering(int k, RestaurantDB db) {
 		// create a list to return
 		List<Set<Restaurant>> kMeansClusters = Collections.synchronizedList(new ArrayList<Set<Restaurant>>());
+		Map<Location, Set<Restaurant>> clusterMap = new ConcurrentHashMap<Location, Set<Restaurant>>();
+		List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
 
-		if (k != 0 && k <= db.getAllRestaurantDetails().size()) {
-			// get initial random centroids
-			List<Location> allCentroids = new ArrayList<Location>();
-			allCentroids = Location.getRandomLocations(k, db);
-			System.out.println(allCentroids.size());
-
-			List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
-
-			// get initial restaurant clusters
-			Map<Location, Set<Restaurant>> clusters = getRestaurantClusters(allRestaurants, allCentroids);
-
-			// do until reaches steady state
-			List<Location> newCentroids = allCentroids;
-			List<Location> oldCentroids;
-
-			do {
-				// save the old centroids for comparison
-				oldCentroids = newCentroids;
-				// find the new centroids with the new clusters
-				newCentroids = findCentroids(clusters);
-
-				// find the new clusters
-				clusters = getRestaurantClusters(allRestaurants, newCentroids);
-
-			} while (!newCentroids.equals(oldCentroids));
-
-			// put all the clusters into the list
-			for (Location currentLoc : clusters.keySet()) {
-				kMeansClusters.add(clusters.get(currentLoc));
-			}
+		// border case of having no clusters
+		if (k <= 0) {
+			return kMeansClusters;
 		}
+
+		// find initial clusters on restaurant locations
+		int index = 0;
+		int numCentroids = 0;
+		while (numCentroids < k && index < allRestaurants.size()) {
+			Location l = new Location(allRestaurants.get(index));
+
+			// only if location is not already there
+			if (!clusterMap.keySet().contains(l)) {
+				clusterMap.put(l, new HashSet<Restaurant>());
+				numCentroids++;
+			}
+			index++;
+		}
+
+		boolean steadyState = false;
+		while (!steadyState) {
+
+			// group into clusters around centroids
+			for (Location loc : clusterMap.keySet()) {
+				clusterMap.get(loc).clear();
+			}
+
+			for (Restaurant currentRes : allRestaurants) {
+				double minDistance = Double.MAX_VALUE;
+				Location closestCentroid = null;
+
+				for (Location curCentroid : clusterMap.keySet()) {
+					double newDistance = curCentroid.getAbsoluteDistance(currentRes);
+					if (newDistance < minDistance) {
+						minDistance = newDistance;
+						closestCentroid = curCentroid;
+					}
+				}
+
+				clusterMap.get(closestCentroid).add(currentRes);
+			}
+
+			// find new centroids
+			Map<Location, Set<Restaurant>> newClusterMap = new HashMap<Location, Set<Restaurant>>();
+			for (Location centroid : clusterMap.keySet()) {
+				Set<Restaurant> currentSet = clusterMap.get(centroid);
+
+				// ignore if the set is empty
+				if (currentSet.size() > 0) {
+					Location newCentroid = findCentroid(currentSet);
+					newClusterMap.put(newCentroid, currentSet);
+				}
+			}
+
+			// if there was no change it means kMeans is finished
+			if (newClusterMap.equals(clusterMap)) {
+				steadyState = true;
+			}
+
+			clusterMap = newClusterMap;
+
+		}
+
+		// put clusters into the list to return
+		kMeansClusters.addAll(clusterMap.values());
+
+		// put empty sets if they wanted more clusters
+		while (kMeansClusters.size() < k) {
+			kMeansClusters.add(new HashSet<Restaurant>());
+		}
+
 		// return it
-		return kMeansClusters;
+		return Collections.synchronizedList(kMeansClusters);
 	}
 
 	/**
@@ -279,76 +319,6 @@ public class Algorithms {
 		sumOfSquares.add(SXY_INDEX, Sxy);
 
 		return Collections.unmodifiableList(sumOfSquares);
-
-	}
-
-	/**
-	 * Helper method to group restaurants with their clusters in a map. Each
-	 * restaurant is a key that maps to their respective centroids.
-	 * 
-	 * @param database
-	 *            the database of restaurants
-	 * @param allCentroids
-	 *            a list of centroids
-	 * @return a map with restaurant-centroid pairs
-	 */
-	private static Map<Location, Set<Restaurant>> getRestaurantClusters(List<Restaurant> database,
-			List<Location> allCentroids) {
-
-		Map<Location, Set<Restaurant>> clusters = new ConcurrentHashMap<Location, Set<Restaurant>>();
-		// initialize empty sets for each centroid
-		for (Location loc : allCentroids) {
-			Set<Restaurant> clusterSet = new HashSet<Restaurant>();
-			clusters.put(loc, clusterSet);
-		}
-
-		// for every restaurant
-		Iterator<Restaurant> ResItr = database.iterator();
-		while (ResItr.hasNext()) {
-			double distance = Double.MAX_VALUE;
-			Restaurant currentRestaurant = ResItr.next();
-
-			// compare the distance between the restaurant and all centroids
-			Location closestCentroid = null;
-			Iterator<Location> locItr = allCentroids.iterator();
-			while (locItr.hasNext()) {
-				Location currentCentroid = locItr.next();
-				double newDistance = currentCentroid.getAbsoluteDistance(currentRestaurant);
-
-				// if the centroid is closer, save the centroid
-				if (newDistance < distance) {
-					closestCentroid = currentCentroid;
-					// as well as the distance
-					distance = newDistance;
-				}
-			}
-
-			// add the restaurant to the set of the closest centroid
-			clusters.get(closestCentroid).add(currentRestaurant);
-
-		}
-		return Collections.unmodifiableMap(clusters);
-	}
-
-	/**
-	 * Helper method to return a list of the new centroids given initial
-	 * clusters and initial centroids.
-	 * 
-	 * @param originalClusters
-	 * @return
-	 */
-	private static List<Location> findCentroids(Map<Location, Set<Restaurant>> originalClusters) {
-
-		List<Location> newCentroids = new ArrayList<Location>();
-		for (Location initialCentroid : originalClusters.keySet()) {
-			if (!originalClusters.get(initialCentroid).isEmpty())
-				newCentroids.add(findCentroid(originalClusters.get(initialCentroid)));
-			else{
-				newCentroids.add(initialCentroid);
-			}
-		}
-
-		return Collections.unmodifiableList(newCentroids);
 
 	}
 

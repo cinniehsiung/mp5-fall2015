@@ -17,13 +17,13 @@ public class AlgorithmsKMeansTest {
 		List<Set<Restaurant>> ans;
 		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
-		ans = Algorithms.kMeansClustering(7, db);
+		ans = Algorithms.kMeansClustering(5, db);
 		for (int i = 0; i < ans.size(); i++) {
 			System.out.println(ans.get(i).toString());
 			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
 		}
 
-		assertEquals(ans.size(), 7);
+		assertEquals(ans.size(), 5);
 		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
 
@@ -68,7 +68,7 @@ public class AlgorithmsKMeansTest {
 			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
 		}
 
-		assertEquals(ans.size(), 0);
+		assertEquals(ans.size(), 136);
 		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
 	
@@ -77,13 +77,13 @@ public class AlgorithmsKMeansTest {
 		List<Set<Restaurant>> ans;
 		RestaurantDB db = new RestaurantDB("data/restaurants.json", "data/reviews.json", "data/users.json");
 
-		ans = Algorithms.kMeansClustering(119, db);
+		ans = Algorithms.kMeansClustering(120, db);
 		for (int i = 0; i < ans.size(); i++) {
 			System.out.println(ans.get(i).toString());
 			System.out.println("Number of Restaurants in Cluster:" + ans.get(i).size());
 		}
 
-		assertEquals(ans.size(), 119);
+		assertEquals(ans.size(), 120);
 		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
 	
