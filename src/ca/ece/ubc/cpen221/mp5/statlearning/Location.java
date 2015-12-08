@@ -1,7 +1,9 @@
 package ca.ece.ubc.cpen221.mp5.statlearning;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ca.ece.ubc.cpen221.mp5.Restaurant;
@@ -50,7 +52,7 @@ public class Location {
 		double long2 = loc.longitude;
 		double lat2 = loc.latitude;
 
-		if (Math.abs(long1 - long2) <= 0.00000005 && Math.abs(lat1 - lat2) <= 0.00000000000005) {
+		if (Math.abs(long1 - long2) <= 0.0000000005 && Math.abs(lat1 - lat2) <= 0.00000000000005) {
 			isEqual = true;
 		}
 
@@ -86,22 +88,14 @@ public class Location {
 		List<Location> allLocations = new CopyOnWriteArrayList<Location>();
 		List<Restaurant> restaurants = database.getAllRestaurantDetails();
 
-		double incrementLong = (MAX_LONGITUDE - MIN_LONGITUDE) / numberOfLocations;
-		double incrementLat = (MAX_LATITUDE - MIN_LATITUDE) / numberOfLocations;
-		double distance = Math.sqrt(Math.pow(incrementLong, 2) + Math.pow(incrementLat, 2));
-
-		Location theCentroid = Algorithms.findCentroid(restaurants);
-
-		for (Restaurant currentRestaurant : restaurants) {
+		int i = 0;
+		while (allLocations.size() < numberOfLocations && i < restaurants.size()) {
+			Restaurant currentRestaurant = restaurants.get(i);
 			Location newLoc = new Location(currentRestaurant.getLocation()[0], currentRestaurant.getLocation()[1]);
-			if (theCentroid.getAbsoluteDistance(currentRestaurant) - distance <= 0.0000005
-					&& !allLocations.contains(newLoc)) {
+			if (!allLocations.contains(newLoc)) {
 				allLocations.add(newLoc);
 			}
-
-			if (allLocations.size() == numberOfLocations) {
-				break;
-			}
+			i++;
 		}
 
 		return Collections.unmodifiableList(allLocations);
@@ -121,6 +115,29 @@ public class Location {
 		double long1 = restaurant.getLocation()[0];
 		double long2 = this.getLongitude();
 		double lat1 = restaurant.getLocation()[1];
+		double lat2 = this.getLatitude();
+
+		double latDistance = lat1 - lat2;
+		double lngDistance = long1 - long2;
+
+		double c = Math.sqrt(latDistance * latDistance + lngDistance * lngDistance);
+
+		return c;
+	}
+	
+	/**
+	 * Helper method to calculate the absolute (always postive) distance between
+	 * a Location and a Location. Uses the Haversine Formula.
+	 * 
+	 * @param loc1
+	 * @param loc2
+	 * @return the absolute distance in kilometers between two Locations
+	 */
+	public double getAbsoluteDistance(Location loc) {
+
+		double long1 = loc.getLongitude();
+		double long2 = this.getLongitude();
+		double lat1 = loc.getLatitude();
 		double lat2 = this.getLatitude();
 
 		double latDistance = lat1 - lat2;

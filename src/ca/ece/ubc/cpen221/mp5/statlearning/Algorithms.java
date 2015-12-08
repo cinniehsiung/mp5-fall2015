@@ -28,8 +28,8 @@ public class Algorithms {
 	 *            the restaurant database with the restaurants
 	 * @param k
 	 *            the number of clusters to compute, must be greater than 0 and
-	 *            less than or equal to the amount of restaurants in the
-	 *            database or the method returns an empty list
+	 *            less than or equal to the amount restaurants with differing
+	 *            locations in the database
 	 * @return the clusters computed through k-means
 	 */
 	public static List<Set<Restaurant>> kMeansClustering(int k, RestaurantDB db) {
@@ -40,6 +40,7 @@ public class Algorithms {
 			// get initial random centroids
 			List<Location> allCentroids = new ArrayList<Location>();
 			allCentroids = Location.getRandomLocations(k, db);
+			System.out.println(allCentroids.size());
 
 			List<Restaurant> allRestaurants = db.getAllRestaurantDetails();
 
@@ -158,15 +159,15 @@ public class Algorithms {
 			sumOfSquaresYY = sumOfSquares.get(SYY_INDEX);
 			sumOfSquaresXY = sumOfSquares.get(SXY_INDEX);
 
-			//System.out.println("Sxx = " + sumOfSquaresXX);     debug purposes
-			//System.out.println("Syy = " + sumOfSquaresYY);     debug purposes
-			//System.out.println("Sxy = " + sumOfSquaresXY);     debug purposes
+			// System.out.println("Sxx = " + sumOfSquaresXX); debug purposes
+			// System.out.println("Syy = " + sumOfSquaresYY); debug purposes
+			// System.out.println("Sxy = " + sumOfSquaresXY); debug purposes
 
 			b = sumOfSquaresXY / sumOfSquaresXX;
 			a = meanPoint.getRating() - b * meanPoint.getFeature();
 
-			//System.out.println("b = " + b);                    debug purposes
-			//System.out.println("a = " + a);                    debug purposes
+			// System.out.println("b = " + b); debug purposes
+			// System.out.println("a = " + a); debug purposes
 
 			rSquared = Math.pow(sumOfSquaresXY, 2) / (sumOfSquaresXX * sumOfSquaresYY);
 		}
@@ -294,7 +295,6 @@ public class Algorithms {
 	private static Map<Location, Set<Restaurant>> getRestaurantClusters(List<Restaurant> database,
 			List<Location> allCentroids) {
 
-		// Need to TEST
 		Map<Location, Set<Restaurant>> clusters = new ConcurrentHashMap<Location, Set<Restaurant>>();
 		// initialize empty sets for each centroid
 		for (Location loc : allCentroids) {
@@ -340,9 +340,12 @@ public class Algorithms {
 	private static List<Location> findCentroids(Map<Location, Set<Restaurant>> originalClusters) {
 
 		List<Location> newCentroids = new ArrayList<Location>();
-
 		for (Location initialCentroid : originalClusters.keySet()) {
-			newCentroids.add(findCentroid(originalClusters.get(initialCentroid)));
+			if (!originalClusters.get(initialCentroid).isEmpty())
+				newCentroids.add(findCentroid(originalClusters.get(initialCentroid)));
+			else{
+				newCentroids.add(initialCentroid);
+			}
 		}
 
 		return Collections.unmodifiableList(newCentroids);
@@ -353,7 +356,7 @@ public class Algorithms {
 	 * Helper method to find the centroid given a set of restaurants.
 	 * 
 	 * @param cluster
-	 *            the set of restaurants.
+	 *            the set of restaurants which cannot be empty.
 	 * @return the centroid of the set of restaurants.
 	 */
 	private static Location findCentroid(Set<Restaurant> cluster) {
@@ -372,13 +375,14 @@ public class Algorithms {
 	}
 
 	/**
-	 * Helper method to find the centroid given a set of restaurants.
+	 * Helper method to find the centroid given a list of restaurants.
 	 * 
 	 * @param cluster
-	 *            the list of restaurants.
+	 *            the list of restaurants of which cannot be empty.
 	 * @return the centroid of the set of restaurants.
 	 */
 	static Location findCentroid(List<Restaurant> cluster) {
+
 		double sumOfLongitudes = 0;
 		double sumOfLatitudes = 0;
 

@@ -33,6 +33,13 @@ public class RestaurantDB {
 	// Rep Invariant:
 	// restaurantDB must be at least of size1.
 
+	// Thread Safety Argument:
+	// All fields are private and final.
+	// The class uses thread-safe data types such as CopyOnWriteArrayList and
+	// ConcurrentHashMap which also support iterators or Synchronized wrappers.
+	// The datatypes Restaurant, Review, and User all return clones or immutable
+	// datatypes when retrieving information.
+
 	private final List<Restaurant> restaurantDB = new CopyOnWriteArrayList<Restaurant>();
 	private final List<Review> reviewDB = new CopyOnWriteArrayList<Review>();
 	private final List<User> userDB = new CopyOnWriteArrayList<User>();
