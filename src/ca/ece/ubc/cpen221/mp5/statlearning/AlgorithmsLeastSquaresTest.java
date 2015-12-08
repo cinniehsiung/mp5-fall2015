@@ -41,7 +41,7 @@ public class AlgorithmsLeastSquaresTest {
     // "user_id": "_NH7Cpq3qZkByP5xR4gXog", "name": "Chris M.", "average_stars":
     // 3.89655172413793}
 
-    // User 2:
+    // User 2 - has no reviews:
     String complete = db.addUser("{\"url\": \"cinnie's user page\", \"votes\": {\"funny\": 35, \"useful\": 21, \"cool\": 14}, \"review_count\": 29, \"type\": \"user\", \"user_id\": \"4530\", \"name\": \"Cinnie H.\", \"average_stars\": 3.89655172413793}");
     User noReviewsUser = db.getAllUserDetails().get(allUsers.size());
     //{"url": "http://www.yelp.com/user_details?userid=9fMogxnnd0m9_FKSi-4AoQ", 

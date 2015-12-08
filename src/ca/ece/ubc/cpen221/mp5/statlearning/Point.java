@@ -3,6 +3,7 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 public class Point {
     private final double ratingGiven;
     private final double feature;
+    //Rep Invariant: 0.0 <= ratingGiven <= 5.0
     
     /**
      * Constructor for the Point class - used to represent a point on a regression graph, where
