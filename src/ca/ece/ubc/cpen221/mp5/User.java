@@ -6,9 +6,23 @@ import java.util.Map;
 
 import org.json.simple.JSONObject;
 
-// TODO: Use this class to represent a Yelp user.
-
 public class User {
+	/**
+	 * Abstraction Function: Represents a User who contributes to the Yelp
+	 * database. Review count represents the number of reviews the User has
+	 * written. Name represents first name and the initial of the last name of
+	 * the user. AvgStars represents the average rating given by the user.
+	 */
+
+	// Rep Invariant
+	// type should always be "user"
+	// 0 <= reviewcount
+	// 0 <= avgStars
+	// 0 <= votes <= 5
+
+	// userID should be unique to each User such that two Users will have
+	// identical userIDs if and only if they are the same User
+
 	// constants for ease of reading and clarity purposes
 	final static String URL_KEY = "url";
 	final static String REVIEWCOUNT_KEY = "review_count";
@@ -53,10 +67,11 @@ public class User {
 		this.votes.put(USEFUL_KEY, (Long) allVotes.get(USEFUL_KEY));
 		this.votes.put(FUNNY_KEY, (Long) allVotes.get(FUNNY_KEY));
 	}
+
 	/**
 	 * This is a error constructor for <b>user</b>.
 	 */
-	public User(){
+	public User() {
 		this.url = "Error";
 		this.reviewCount = 0L;
 		this.type = "Error";
@@ -68,7 +83,7 @@ public class User {
 		this.votes.put(USEFUL_KEY, 0L);
 		this.votes.put(FUNNY_KEY, 0L);
 	}
-	
+
 	/**
 	 * A method to return the url of the user.
 	 * 

@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-// TODO: Implement a server that will instantiate a database, 
-// process queries concurrently, etc.
-
 public class RestaurantDBServer {
+	/**
+	 * Multi-threaded server that instantiates a database and process queries
+	 * concurrently...
+	 */
 
 	// class fields
 	private final RestaurantDB database;
@@ -105,6 +106,5 @@ public class RestaurantDBServer {
 
 		return;
 	}
-
 
 }

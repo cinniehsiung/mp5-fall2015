@@ -1,10 +1,7 @@
 package ca.ece.ubc.cpen221.mp5.statlearning;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ca.ece.ubc.cpen221.mp5.Restaurant;
@@ -21,7 +18,7 @@ public class Location {
 
 	/**
 	 * Represents a location with longitude and latitude coordinates in degrees
-	 * in the Yelp neighbourhood.
+	 * in the Yelp region our dataset is contained.
 	 * 
 	 * @param longitude
 	 *            must be between -122.251 and -122.266 degrees
@@ -62,13 +59,22 @@ public class Location {
 	}
 
 	@Override
+	public int hashCode() {
+		String lat = Double.toString(this.latitude);
+		String longi = Double.toString(this.longitude);
+
+		return lat.hashCode() + longi.hashCode();
+	}
+
+	@Override
 	public String toString() {
 		return "(" + longitude + ", " + latitude + ")";
 	}
 
 	/**
 	 * Helper method to generate a list of differing locations where there is a
-	 * restaurant existing on each location.
+	 * restaurant existing on each location around the centroid of all the
+	 * restaurants.
 	 * 
 	 * @param numberOfLocations
 	 *            the number of unique locations to generate

@@ -7,19 +7,26 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-// TODO: Use this class to represent a restaurant.
-// State the rep invariant and abs
-
 public class Restaurant {
+
 	/**
-	 * Abstraction Function: TODO
+	 * Abstraction Function: This Restaurant class represents a restaurant in
+	 * the real world. The fields "name" and "businessID" map to the name of the
+	 * restaurant and a unique String associated with this particular
+	 * restaurant. Location[] represents the longitude and latitude coordinates
+	 * of the restaurant. The fields "city", "address" and "state" also
+	 * represent the exact address of the restaurant in the real world. The set
+	 * of "neighborhoods" represents the set of neighborhoods surrounding the
+	 * restaurant in the real world. Categories represent the types of food the
+	 * restaurant may serve. Schools represent the set of universities in the
+	 * proximity of the restaurant. Stars and price are ratings given by reviews
+	 * for the rating of the restaurant and how expensive the restaurant is.
 	 */
 
 	// Rep Invariant:
 
-	// No fields can be null. city, address, state, neighborhoods and schools
-	// must
-	// represent real cities, address, states, neighborhoods and universities.
+	// No fields can be null.
+	// this.type should always be "business"
 	// -180 <= Location[0] <= 180
 	// -90 <= Location[1] <= 90 (max and min values for longitude and latitude)
 
@@ -59,6 +66,8 @@ public class Restaurant {
 	final private boolean open;
 	
 	// numbers
+	// RI: -180 <= location[0] <=180, -90 <= location[1] <= 90
+
 	final private String city;
 	final private String address;
 	final private String state;
@@ -69,9 +78,9 @@ public class Restaurant {
 	final private String type;
 	final private Set<String> categories = new HashSet<String>();
 
-	final private double stars; // rep invariant check if 5 max
-	private long reviewCount; // RI: is equal to the number of ratings (stars)
-	final private long price; // rep invariant price > 0
+	final private double stars; // RI: 0 <= stars <= 5
+	private long reviewCount; // RI: 0 <= reviewCount
+	final private long price; // RI: 0 <= price
 	final private String photo;
 	final private Set<String> schools = new HashSet<String>();
 
