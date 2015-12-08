@@ -3,6 +3,8 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,12 +124,18 @@ public class Algorithms {
 	public static String convertClustersToJSON(List<Set<Restaurant>> clusters) {
 		JSONArray clustersJSON = new JSONArray();
 
+		int clusterNum = 0;
 		for (Set<Restaurant> cluster : clusters) {
-			JSONArray currentClusterJSON = new JSONArray();
-			for (Restaurant restaurant : cluster) {
-				currentClusterJSON.add(restaurant.getRestaurantJSON());
+			for (Restaurant res : cluster) {
+				JSONObject currentObj = new JSONObject();
+				currentObj.put("x", res.getLocation()[1]);
+				currentObj.put("y", res.getLocation()[0]);
+				currentObj.put("name", res.getName());
+				currentObj.put("cluster", clusterNum);
+				currentObj.put("weight", 4);
+				clustersJSON.add(currentObj);
 			}
-			clustersJSON.add(currentClusterJSON);
+			clusterNum++;
 		}
 
 		return clustersJSON.toJSONString();

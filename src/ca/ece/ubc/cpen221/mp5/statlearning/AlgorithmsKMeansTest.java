@@ -26,7 +26,7 @@ public class AlgorithmsKMeansTest {
 		assertEquals(ans.size(), 5);
 		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
-
+/*
 	@Test
 	public void testKMeansClustering2() {
 		List<Set<Restaurant>> ans;
@@ -101,5 +101,5 @@ public class AlgorithmsKMeansTest {
 		assertEquals(ans.size(), 135);
 		System.out.println(Algorithms.convertClustersToJSON(ans)); // visualize
 	}
-
+*/
 }
