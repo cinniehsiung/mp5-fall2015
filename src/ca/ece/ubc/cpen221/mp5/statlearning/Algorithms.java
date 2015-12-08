@@ -27,14 +27,16 @@ public class Algorithms {
 	 * @param db
 	 *            the restaurant database with the restaurants
 	 * @param k
-	 *            the number of clusters to compute, must be greater than 0
+	 *            the number of clusters to compute, must be greater than 0 and
+	 *            less than or equal to the amount of restaurants in the
+	 *            database or the method returns an empty list
 	 * @return the clusters computed through k-means
 	 */
 	public static List<Set<Restaurant>> kMeansClustering(int k, RestaurantDB db) {
 		// create a list to return
 		List<Set<Restaurant>> kMeansClusters = Collections.synchronizedList(new ArrayList<Set<Restaurant>>());
 
-		if (k != 0) {
+		if (k != 0 && k <= db.getAllRestaurantDetails().size()) {
 			// get initial random centroids
 			List<Location> allCentroids = new ArrayList<Location>();
 			allCentroids = Location.getRandomLocations(k, db);
