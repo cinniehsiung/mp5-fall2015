@@ -125,7 +125,7 @@ public class RestaurantDBWorker implements Runnable {
 		String requestType = request.substring(0, request.indexOf("("));
 		int END_INDEX = request.length() - 2;
 
-		if ('\"' == request.charAt(request.indexOf("(") + 1) && '\"' == request.charAt(request.length() - 2)) {
+		if ('\"' == request.charAt(request.indexOf("(") + 1) && '\"' == request.charAt(request.length() - 2) && (request.indexOf("(")+1) != (request.length() - 2)) {
 
 			if ("randomReview".equals(requestType)) {
 				String restaurantName = request.substring(START_INDEX_RANDOMREVIEW, END_INDEX);

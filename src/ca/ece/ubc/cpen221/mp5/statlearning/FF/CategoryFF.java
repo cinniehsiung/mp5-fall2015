@@ -14,9 +14,19 @@ public class CategoryFF implements MP5Function {
     //map to represent the mapping from category -> integer
     private Map<String, Integer> categoriesDB = new ConcurrentHashMap<String, Integer>();
 
-    public CategoryFF(){
-        
-    }
+
+    /**
+     * This method returns the category of the given yelpRestaurant.
+     * 
+     * @param yelpRestaurant
+     *          The given yelpRestaurant we want the category of.
+     *          
+     * @param db
+     *          The database that the yelpRestaurant will be found in.
+     *          
+     * @return a double representing the category of a given restaurant. If a restaurant has multiple categories, it will
+     *          return the first category of the restaurant.
+     */
     
     @Override
     public double f(Restaurant yelpRestaurant, RestaurantDB db) {

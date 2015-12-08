@@ -50,10 +50,14 @@ public class Restaurant {
 	final static String PRICE_KEY = "price";
 	final static String PHOTO_KEY = "photo_url";
 	final static String SCHOOLS_KEY = "schools";
+	
+	final static String OPEN_KEY = "open";
 
 	// fields for restaurant
 	final private double[] location = new double[2];
-
+	
+	final private boolean open;
+	
 	// numbers
 	final private String city;
 	final private String address;
@@ -90,6 +94,8 @@ public class Restaurant {
 		this.reviewCount = -1;
 		this.price = -1;
 		this.photo = "Error";
+		
+		this.open = false;
 
 	}
 
@@ -132,6 +138,8 @@ public class Restaurant {
 		for (Object currentSchool : allSchools) {
 			this.schools.add((String) currentSchool);
 		}
+		
+		this.open = (boolean) restaurantJSON.get(OPEN_KEY);
 	}
 
 	/**
@@ -271,6 +279,8 @@ public class Restaurant {
 	 */
 	public JSONObject getRestaurantJSON() {
 		JSONObject restaurantJSON = new JSONObject();
+		
+		restaurantJSON.put(OPEN_KEY, this.open);
 
 		restaurantJSON.put(LONGITUDE_KEY, this.location[LONGITUDE]);
 		restaurantJSON.put(LATITUDE_KEY, this.location[LATITUDE]);

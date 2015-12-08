@@ -17,6 +17,19 @@ public class PredictorFF implements MP5Function{
     //representation of the line y = ax + b
     //where y is the rating, and x is the feature (eg. price)
     
+    /**
+     * Constructor for the Predictor Feature Function class.
+     * @param a
+     *          a value in the regression formula
+     * @param b     
+     *          b value in the regression formula
+     * @param rSquared
+     *          r_squared value of the given regression formula
+     * @param featureFunction
+     *          feature function the regression formula is designed for
+     * @param allPoints
+     *          list of all points corresponding to this regression formula
+     */
     public PredictorFF(double a, double b, double rSquared, MP5Function featureFunction, List<Point> allPoints){
         this.a = a;
         this.b = b;
@@ -45,7 +58,7 @@ public class PredictorFF implements MP5Function{
         double predictedRating;
         double x = featureFunction.f(yelpRestaurant, db);      
         
-        System.out.println("x = " + x);
+        //System.out.println("x = " + x);   debug purposes
         
         predictedRating = a + b*x;        
         
@@ -59,18 +72,37 @@ public class PredictorFF implements MP5Function{
         return predictedRating;
     }
 
+    /**
+     * Method to get the a value of the predictor's regression formula, where y = a + bx
+     * 
+     * @return a double representing the a value of the regression formula
+     */
     public double getA(){
         return a;
     }
     
+    /**
+     * Method to get the b value of the predictor's regression formula, where y = a + bx
+     * 
+     * @return a double representing the b value of the regression formula
+     */
     public double getB(){
         return b;
     }
     
+    /**
+     * Method to get the r_squared value of the predictor's regression formula for the given set of Points
+     * 
+     * @return a double representing the r_square value of the regression formula
+     */
     public double getRSquared(){
         return rSquared;
     }
-    //make clone method
+
+    /**
+     * Method to get the feature function that the regression formula predictor was created based on.
+     * @return a MP5Function for the regression formula (eg. a priceScaleFF if the predictor is predicting rating based on price)
+     */
     public MP5Function getFF(){
         return featureFunction;
     }
